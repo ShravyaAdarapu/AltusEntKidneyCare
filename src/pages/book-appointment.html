@@ -1,0 +1,68 @@
+<!--
+title: Book an Appointment | Altus ENT & Kidney Care, Hyderabad
+description: Book a consultation with a nephrologist or ENT surgeon at Altus ENT & Kidney Care, Shaikpet. Call 99668 81811, WhatsApp, or book online.
+nav: book
+-->
+<section class="page-hero banner-visit">
+  <div class="wrap">
+    <div class="crumbs"><a href="index.html">Home</a> / Book Appointment</div>
+    <span class="eyebrow">Appointments</span>
+    <h1>Book your visit</h1>
+    <p class="lead">Fill in a few details and send them to us on WhatsApp. The front desk will confirm your slot, usually within an hour during clinic hours.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap two-col" style="--cols:1.4fr 1fr">
+    <div class="card reveal" style="padding:40px">
+      <form id="bookingForm" class="form" novalidate>
+        <div class="full">
+          <label>Choose a speciality</label>
+          <div class="seg">
+            <input type="radio" name="specialty" id="spec-kidney" value="Kidney Care" checked>
+            <label for="spec-kidney">{{icon:kidney}}<div><b>Kidney Care</b><span>Dr. Chetan Veeramaneni</span></div></label>
+            <input type="radio" name="specialty" id="spec-ent" value="ENT Care">
+            <label for="spec-ent">{{icon:ear}}<div><b>ENT Care</b><span>Dr. T. Mounika</span></div></label>
+          </div>
+        </div>
+        <div><label for="f-name">Patient name *</label><input id="f-name" name="name" required autocomplete="name" placeholder="Full name"></div>
+        <div><label for="f-phone">Mobile number *</label><input id="f-phone" name="phone" type="tel" required pattern="[0-9+\s]{10,14}" autocomplete="tel" placeholder="10-digit mobile"></div>
+        <div><label for="f-age">Age</label><input id="f-age" name="age" type="number" min="0" max="120" placeholder="Years"></div>
+        <div><label for="f-doctor">Doctor</label>
+          <select id="f-doctor" name="doctor"><option>Dr. Chetan Veeramaneni</option><option>Dr. T. Mounika</option></select></div>
+        <div><label for="f-date">Preferred date *</label><input id="f-date" name="date" type="date" required></div>
+        <div><label for="f-slot">Preferred time</label>
+          <select id="f-slot" name="slot"><option>5:00 – 6:00 PM</option><option>6:00 – 7:00 PM</option><option>7:00 – 8:00 PM</option><option>8:00 – 9:00 PM</option><option>Sunday morning</option></select></div>
+        <div class="full"><label for="f-visit">Visit type</label>
+          <select id="f-visit" name="visit"><option>First consultation</option><option>Follow-up</option><option>Second opinion</option><option>Report review</option></select></div>
+        <div class="full"><label for="f-msg">Briefly, what's the concern?</label><textarea id="f-msg" name="message" placeholder="e.g. high creatinine in recent tests, or blocked nose for 3 months"></textarea></div>
+        <div class="full btn-row" style="align-items:center">
+          <button class="btn btn-primary" type="submit">{{icon:whatsapp}} Send booking on WhatsApp</button>
+          <span class="form-note">Opens WhatsApp with your details filled in.</span>
+        </div>
+        <div class="full form-success" id="formSuccess" role="status">Your request is ready in WhatsApp. Press send there and we'll confirm your slot shortly.</div>
+      </form>
+    </div>
+    <aside class="grid" style="gap:20px;align-content:start">
+      <div class="card bg-brown call-card reveal">
+        <h3>Prefer to call?</h3>
+        <a href="tel:{{site:phone_raw}}" style="font:600 2rem var(--sans);color:var(--ivory-50);display:block;margin:6px 0 18px">{{site:phone}}</a>
+        {{part:timings}}
+      </div>
+      <div class="card reveal" style="padding:32px">
+        <h4>Please bring</h4>
+        <ul class="check-list" style="font-size:.95rem">
+          <li>Previous reports, scans and discharge summaries</li>
+          <li>All medicines you take, or photos of the strips</li>
+          <li>Government photo ID</li>
+          <li>Insurance card, if any</li>
+        </ul>
+      </div>
+      <div class="card reveal" style="padding:24px;background:var(--cream-100)">
+        <p style="margin:0;font-size:.9rem"><b>Emergency?</b> Please don't use this form. Call 108 or go to the nearest hospital emergency department.</p>
+      </div>
+    </aside>
+  </div>
+</section>
+
+
