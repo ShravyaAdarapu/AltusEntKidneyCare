@@ -12,6 +12,7 @@ Tokens inside pages and partials:
     {{site:key}}      clinic details from SITE
 Run: python build.py  ->  writes dist/
 """
+import hashlib
 import re
 import shutil
 from pathlib import Path
@@ -75,6 +76,7 @@ ICONS = {
     "lab": f'<svg {I}><path d="M8 3h8M9 3v5l-4 8a3 3 0 0 0 2.7 4.5h8.6A3 3 0 0 0 19 16l-4-8V3"/></svg>',
     "instagram": f'<svg {I}><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor"/></svg>',
     "youtube": f'<svg {I}><rect x="2" y="5" width="20" height="14" rx="4"/><path d="m10 9 5 3-5 3V9Z" fill="currentColor"/></svg>',
+    "linkedin": f'<svg {I}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 10v6m4 0v-6m0 3a2 2 0 0 1 4 0v3"/><circle cx="8" cy="7.5" r=".65" fill="currentColor"/></svg>',
     "facebook": f'<svg {I}><path d="M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8Z"/></svg>',
     "star": '★',
 }
@@ -93,8 +95,7 @@ BRAND = f"""<a href="index.html" class="brand" aria-label="Altus ENT &amp; Kidne
 
 # Opening hours are placeholders until the doctors confirm OPD timings.
 TIMINGS = """<table class="timings">
-<tr><td>Monday – Saturday</td><td>5:00 PM – 9:00 PM</td></tr>
-<tr><td>Sunday</td><td>10:00 AM – 1:00 PM</td></tr>
+<tr><td>Booking window</td><td>10:00 AM – 7:00 PM IST</td></tr>
 <tr><td>Kidney Care OPD · Dr. Chetan</td><td>Mon, Wed, Fri</td></tr>
 <tr><td>ENT Care OPD · Dr. Mounika</td><td>Tue, Thu, Sat</td></tr>
 </table>"""
@@ -105,11 +106,11 @@ PARTS = {
     "logo": LOGO,
     "cta": """<section class="section tight"><div class="wrap"><div class="cta-band reveal">
 <div class="art">{{part:logo}}</div>
-<div><span class="eyebrow">Appointments</span><h2>Two specialists. One calm, unhurried clinic.</h2>
-<p>Call, WhatsApp or book online. Our front desk will confirm your slot and tell you what to bring.</p></div>
+<div><span class="eyebrow">Appointments</span><h2>Let’s plan your visit.</h2>
+<p>If you’re unsure what to bring or which specialist to see, ask our front desk when you request an appointment.</p></div>
 <div><small style="letter-spacing:.2em;text-transform:uppercase;opacity:.8">For appointments</small>
 <a class="phone" href="tel:{{site:phone_raw}}">{{site:phone}}</a>
-<div class="btn-row"><a class="btn btn-light" href="book-appointment.html">{{icon:calendar}} Book online</a>
+<div class="btn-row"><a class="btn btn-light" href="book-appointment.html">{{icon:calendar}} Request an appointment</a>
 <a class="btn btn-ghost-light" href="https://wa.me/{{site:wa}}?text=Hello%20Altus%2C%20I%27d%20like%20to%20book%20an%20appointment." target="_blank" rel="noopener">{{icon:whatsapp}} WhatsApp</a></div></div>
 </div></div></section>""",
 }
@@ -128,7 +129,7 @@ NAV = [
     ("patients", "patient-info.html", "Patient Info"),
     ("gallery", "gallery.html", "Gallery"),
     ("blog", "health-library.html", "Blogs"),
-    ("contact", "contact.html", "Contact"),
+    ("contact", "contact.html", "Contact Us"),
 ]
 
 
@@ -161,7 +162,7 @@ LAYOUT = """<!doctype html>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400..700&family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/style.css?v={style_version}">
 <script type="application/ld+json">{schema}</script>
 </head>
 <body>
@@ -200,8 +201,12 @@ LAYOUT = """<!doctype html>
 <li><a href="privacy-policy.html">Privacy Policy</a></li>
 </ul></div>
 <div><h4>Visit us</h4>
-<p>{{{{site:addr1}}}},<br>{{{{site:addr2}}}},<br>{{{{site:city}}}}</p>
-<p><a href="tel:{{{{site:phone_raw}}}}">{{{{site:phone}}}}</a><br><a href="mailto:{{{{site:email}}}}">{{{{site:email}}}}</a></p>
+<address class="footer-contact">
+  <a href="https://www.google.com/maps/search/?api=1&amp;query={{{{site:map_q}}}}" target="_blank" rel="noopener">{{{{icon:pin}}}}<span>{{{{site:addr1}}}}, {{{{site:addr2}}}}, {{{{site:city}}}}</span></a>
+  <a href="tel:{{{{site:phone_raw}}}}">{{{{icon:phone}}}}<span>{{{{site:phone}}}}</span></a>
+  <a href="mailto:{{{{site:email}}}}">{{{{icon:mail}}}}<span>{{{{site:email}}}}</span></a>
+  <a href="https://wa.me/{{{{site:wa}}}}" target="_blank" rel="noopener">{{{{icon:whatsapp}}}}<span>WhatsApp</span></a>
+</address>
 <div class="emergency-note">For a medical emergency, please call 108 or go to the nearest hospital emergency department.</div>
 </div>
 </div>
@@ -220,7 +225,7 @@ LAYOUT = """<!doctype html>
 <a href="https://wa.me/{{{{site:wa}}}}" target="_blank" rel="noopener">{{{{icon:whatsapp}}}}WhatsApp</a>
 <a class="primary" href="book-appointment.html">{{{{icon:calendar}}}}Book</a>
 </nav>
-<script src="assets/js/main.js"></script>
+<script src="assets/js/main.js?v={script_version}"></script>
 </body>
 </html>
 """
@@ -244,13 +249,15 @@ def build():
     shutil.copytree(SRC / "assets", DIST / "assets", dirs_exist_ok=True)
     (DIST / "assets" / "img").mkdir(exist_ok=True)
     (DIST / "assets" / "img" / "favicon.svg").write_text(LOGO.replace('class="mark" ', '').replace("currentColor", "#5c3d26"), encoding="utf-8")
+    script_version = hashlib.sha256((SRC / "assets/js/main.js").read_bytes()).hexdigest()[:12]
+    style_version = hashlib.sha256((SRC / "assets/css/style.css").read_bytes()).hexdigest()[:12]
     for page in sorted((SRC / "pages").glob("*.html")):
         raw = page.read_text(encoding="utf-8")
         m = re.match(r"<!--(.*?)-->\s*", raw, re.S)
         meta = dict(re.findall(r"^\s*(\w+):\s*(.+?)\s*$", m.group(1), re.M))
         body = raw[m.end():]
         html = LAYOUT.format(title=meta["title"], description=meta["description"],
-                             nav=nav_html(meta.get("nav", "")), body=body, schema=SCHEMA)
+                             nav=nav_html(meta.get("nav", "")), body=body, schema=SCHEMA, script_version=script_version, style_version=style_version)
         (DIST / page.name).write_text(render(html), encoding="utf-8")
         print("built", page.name)
 

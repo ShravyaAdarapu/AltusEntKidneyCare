@@ -11,8 +11,15 @@ nav: home
       <p class="hero-address">{{site:addr1}}<br>{{site:addr2}}</p>
       <a class="btn btn-light" href="book-appointment.html">Book a consultation</a>
     </div>
+
+  </div>
+</section>
+
+<section class="home-founder-section" aria-labelledby="founder-title">
+  <div class="wrap">
+    <h2 id="founder-title">Meet our doctors</h2>
     <div class="hero-founders">
-    <div class="home-doctors-grid">
+    <div class="home-doctors-grid reveal">
       <article class="home-doctor reveal">
         <div class="home-doctor-visual">
           <img src="https://drchetanveeramaneni.com/wp-content/uploads/2024/09/Dr.-Chetan-Veeramaneni.jpg" alt="Dr. Chetan Veeramaneni" loading="lazy">
@@ -41,7 +48,7 @@ nav: home
 
 
 <section class="section home-photo-section" aria-labelledby="home-photo-title">
-  <div class="wrap home-photo-layout">
+  <div class="wrap home-photo-layout reveal">
     <div>
       <span class="eyebrow">Explore our specialties</span>
       <h2 id="home-photo-title">ENT and kidney consultations</h2>
@@ -56,30 +63,55 @@ nav: home
   </div>
 </section>
 
-<div class="wrap care-metrics" aria-label="Published clinical figures">
-  <div><strong data-metric="3500">3,500</strong><strong>+</strong><span>Patients reported by Dr. Chetan</span></div>
+<div class="wrap care-metrics reveal" aria-label="Published clinical figures">
+  <div><strong data-metric="3500">3,500</strong><strong>+</strong><span>Patients cared for by Dr. Chetan</span></div>
   <div><strong data-metric="25">25</strong><strong>+</strong><span>ENT camps attended by Dr. Mounika</span></div>
-  <div><strong data-metric="10">10</strong><strong>+</strong><span>Years of experience reported by Dr. Chetan</span></div>
-  <p class="care-metrics-source">Sources: <a href="https://drchetanveeramaneni.com/">Dr. Chetan’s website</a> and Dr. Mounika’s CV (ENT outreach, 2018–2023).</p>
+  <div><strong data-metric="10">10</strong><strong>+</strong><span>Years of experience · Dr. Chetan</span></div>
 </div>
 
 <section class="section home-services" aria-labelledby="services-title">
   <div class="wrap">
     <span class="eyebrow">What we treat</span>
     <h2 id="services-title" class="reveal">Services offered</h2>
-    <div class="grid g2">
+    <div class="home-service-grid">
       <article class="card reveal">
-        <h3>ENT Care</h3>
-        <ul><li>Sinus problems and nasal blockage</li><li>Ear infections, hearing concerns and dizziness</li><li>Throat, voice and tonsil concerns</li><li>Head and neck assessment</li></ul>
-        <a href="ent-care.html">Explore ENT services →</a>
+        <img class="service-photo-strip" src="https://images.unsplash.com/photo-1573497620053-ea5300f94f21?auto=format&amp;fit=crop&amp;w=240&amp;h=640&amp;q=82" alt="" width="240" height="640" loading="lazy">
+        <h3>Ear &amp; hearing care</h3>
+        <p>Ear infections, hearing concerns and dizziness.</p>
+        <a href="ent-care.html" aria-label="Explore ENT care: Ear &amp; hearing care">Explore ENT care ↗</a>
       </article>
       <article class="card reveal">
-        <h3>Kidney Care</h3>
-        <ul><li>Chronic kidney disease and acute kidney injury</li><li>Kidney care for diabetes and high blood pressure</li><li>Dialysis planning and follow-up</li><li>Kidney transplant evaluation and follow-up</li></ul>
-        <a href="kidney-care.html">Explore kidney services →</a>
+        <img class="service-photo-strip" src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&amp;fit=crop&amp;w=240&amp;h=640&amp;q=82" alt="" width="240" height="640" loading="lazy">
+        <h3>Sinus, throat &amp; voice</h3>
+        <p>Nasal blockage, sinus concerns, tonsils and voice changes.</p>
+        <a href="ent-care.html" aria-label="Explore ENT care: Sinus, throat &amp; voice">Explore ENT care ↗</a>
+      </article>
+      <article class="card reveal">
+        <img class="service-photo-strip" src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&amp;fit=crop&amp;w=240&amp;h=640&amp;q=82" alt="" width="240" height="640" loading="lazy">
+        <h3>Kidney consultations</h3>
+        <p>Kidney test results, chronic kidney disease and kidney care for diabetes or high blood pressure.</p>
+        <a href="kidney-care.html" aria-label="Explore kidney care: Kidney consultations">Explore kidney care ↗</a>
+      </article>
+      <article class="card reveal">
+        <img class="service-photo-strip" src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&amp;fit=crop&amp;w=240&amp;h=640&amp;q=82" alt="" width="240" height="640" loading="lazy">
+        <h3>Dialysis &amp; transplant</h3>
+        <p>Dialysis planning, transplant evaluation and follow-up.</p>
+        <a href="kidney-care.html" aria-label="Explore kidney care: Dialysis &amp; transplant">Explore kidney care ↗</a>
       </article>
     </div>
   </div>
 </section>
 
-<section class="section tight bg-brown home-visit"><div class="wrap head-row"><div><span class="eyebrow">Shaikpet, Hyderabad</span><h2>Visit Altus</h2><p>{{site:addr1}}<br>{{site:addr2}}<br>{{site:city}}</p><a href="tel:{{site:phone_raw}}">{{site:phone}}</a></div><div class="btn-row"><a class="btn btn-light" href="contact.html">Clinic directions</a><a class="btn btn-light" href="book-appointment.html">Book a consultation</a></div></div></section>
+<section class="section home-feedback" aria-labelledby="feedback-title">
+  <div class="wrap">
+    <span class="eyebrow">Visit Altus · Shaikpet, Hyderabad</span>
+    <h2 id="feedback-title">Tell us what’s troubling you.<br>We’ll talk through what comes next.</h2>
+    <p>Bring your questions and any past reports to your ENT or kidney consultation.</p>
+    <address>{{site:addr1}}<br>{{site:addr2}}<br>{{site:city}}</address>
+    <a class="home-visit-phone" href="tel:{{site:phone_raw}}">{{site:phone}}</a>
+    <div class="btn-row home-visit-actions">
+      <a class="btn btn-light" href="book-appointment.html">Book a consultation</a>
+      <a class="btn btn-light" href="https://www.google.com/maps/search/?api=1&amp;query={{site:map_q}}" target="_blank" rel="noopener">Get directions ↗</a>
+    </div>
+  </div>
+</section>
