@@ -212,11 +212,31 @@
     let active = cards[0];
     let visible = false;
     let timer;
+    const dots = document.createElement('div');
+    dots.className = 'gallery-slide-dots';
+    dots.setAttribute('role', 'group');
+    dots.setAttribute('aria-label', 'Featured photo slides');
+    const slideButtons = [0, 1].map(index => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.setAttribute('aria-label', 'Show photo ' + (index + 1));
+      button.addEventListener('click', () => {
+        clearTimeout(timer);
+        setSlide(index);
+      });
+      dots.append(button);
+      return button;
+    });
+
+    function setSlide(index) {
+      active.classList.toggle('show-alternate', index === 1);
+      slideButtons.forEach((button, position) => button.setAttribute('aria-pressed', position === index));
+    }
 
     function schedule() {
       clearTimeout(timer);
       if (visible && !motion.matches && !active.classList.contains('show-alternate')) {
-        timer = setTimeout(() => active.classList.add('show-alternate'), 3200);
+        timer = setTimeout(() => setSlide(1), 3200);
       }
     }
 
@@ -225,6 +245,8 @@
       active.setAttribute('aria-pressed', 'false');
       active = card;
       active.setAttribute('aria-pressed', 'true');
+      active.closest('figure').append(dots);
+      setSlide(0);
       schedule();
     }
 
@@ -246,7 +268,7 @@
       });
     }));
     motion.addEventListener('change', () => {
-      active.classList.remove('show-alternate');
+      setSlide(0);
       schedule();
     });
     select(active);

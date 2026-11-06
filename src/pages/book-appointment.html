@@ -14,7 +14,7 @@ nav: book
 
 <section class="section">
   <div class="wrap two-col" style="--cols:1.4fr 1fr">
-    <div class="card reveal" style="padding:40px">
+    <div class="card reveal booking-form-card">
       <form id="bookingForm" class="form" novalidate>
         <div class="full">
           <label>Choose a speciality</label>
@@ -42,7 +42,7 @@ nav: book
           <select id="f-visit" name="visit"><option>First consultation</option><option>Follow-up</option><option>Second opinion</option><option>Report review</option></select></div>
         <div class="full"><label for="f-msg">Briefly, what's the concern?</label><textarea id="f-msg" name="message" placeholder="e.g. high creatinine in recent tests, or blocked nose for 3 months"></textarea></div>
         <div class="full btn-row" style="align-items:center">
-          <button class="btn btn-primary" type="submit">{{icon:whatsapp}} Send booking on WhatsApp</button>
+          <button class="btn btn-primary" type="submit">{{icon:whatsapp}} Book an appointment</button>
         </div>
         <div class="full form-success" id="formSuccess" role="status">Your request is ready in WhatsApp. Press send there and we'll confirm your slot shortly.</div>
       </form>
@@ -59,7 +59,6 @@ nav: book
           <li>Previous reports, scans and discharge summaries</li>
           <li>All medicines you take, or photos of the strips</li>
           <li>Government photo ID</li>
-          <li>Insurance card, if any</li>
         </ul>
       </div>
       <div class="card reveal" style="padding:24px;background:var(--cream-100)">

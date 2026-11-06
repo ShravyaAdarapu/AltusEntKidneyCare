@@ -26,18 +26,28 @@ nav: gallery
 
 <section class="section gallery-learning" data-gallery-focus aria-labelledby="gallery-learning-title">
   <div class="wrap">
-    <h2 id="gallery-learning-title">Read and watch</h2>
-    <div class="gallery-learning-grid reveal">
-      <div>
-        <h3>From Dr. Chetan</h3>
-        <details><summary>Understanding renal biopsy</summary><p>Learn what a kidney biopsy is and why a specialist might recommend one.</p></details>
-        <details><summary>Diabetes-related kidney damage</summary><p>An introduction to how diabetes can affect the kidneys and why screening matters.</p></details>
-        <h3>From Dr. Mounika’s research</h3>
-        <details><summary>Newborn hearing screening</summary><p>Dr. Mounika’s research explores newborn hearing screening using otoacoustic emissions.</p></details>
+    <header class="gallery-learning-heading">
+      <span class="eyebrow">Patient education</span>
+      <h2 id="gallery-learning-title">Read and watch</h2>
+      <p>Explore common questions in ENT and kidney care.</p>
+    </header>
+    <div class="gallery-learning-grid">
+      <div class="gallery-reading-panel">
+        <div class="gallery-topic">
+          <span class="gallery-topic-label">Kidney care</span>
+          <h3>From Dr. Chetan</h3>
+          <details><summary>Understanding renal biopsy</summary><p>Learn what a kidney biopsy is and why a specialist might recommend one.</p></details>
+          <details><summary>Diabetes-related kidney damage</summary><p>An introduction to how diabetes can affect the kidneys and why screening matters.</p></details>
+        </div>
+        <div class="gallery-topic">
+          <span class="gallery-topic-label">ENT care</span>
+          <h3>From Dr. Mounika’s research</h3>
+          <details><summary>Newborn hearing screening</summary><p>Dr. Mounika’s research explores newborn hearing screening using otoacoustic emissions.</p></details>
+        </div>
       </div>
-      <figure>
+      <figure class="gallery-video-panel">
+        <figcaption><span class="gallery-topic-label">Featured video</span><h3>Dialysis myths explained</h3><p>Dr. Chetan Veeramaneni · Yashoda Hospitals</p></figcaption>
         <iframe src="https://www.youtube-nocookie.com/embed/g97KwQjk1f4" title="Dr. Chetan Veeramaneni explains dialysis myths" loading="lazy" allowfullscreen></iframe>
-        <figcaption>Dialysis myths explained · Dr. Chetan Veeramaneni, Yashoda Hospitals</figcaption>
       </figure>
     </div>
   </div>
@@ -45,7 +55,7 @@ nav: gallery
 
 <section class="section gallery-editorial">
   <div class="wrap">
-    <section class="gallery-clinic reveal" data-gallery-focus aria-labelledby="gallery-clinic-title">
+    <section class="gallery-clinic" data-gallery-focus aria-labelledby="gallery-clinic-title">
       <h2 id="gallery-clinic-title">Healthcare photo gallery</h2>
       <div class="gallery-samples gallery-category-grid">
         <figure>
@@ -105,7 +115,6 @@ nav: gallery
           <figcaption>Patient resources</figcaption>
         </figure>
       </div>
-      <button class="gallery-focus-toggle btn btn-outline" type="button" hidden>Pause photo rotation</button>
     </section>
   </div>
 </section>

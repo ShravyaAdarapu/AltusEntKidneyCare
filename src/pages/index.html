@@ -25,6 +25,7 @@ nav: home
           <img src="https://drchetanveeramaneni.com/wp-content/uploads/2024/09/Dr.-Chetan-Veeramaneni.jpg" alt="Dr. Chetan Veeramaneni" loading="lazy">
         </div>
         <div class="home-doctor-details">
+          <span class="founder-specialty">Kidney Care</span>
           <h3>Dr. Chetan Veeramaneni</h3>
           <p class="home-doctor-role">Nephrologist &amp; Renal Transplant Physician</p>
           <a href="dr-chetan-veeramaneni.html" aria-label="View Dr. Chetan Veeramaneni’s profile">View profile <span aria-hidden="true">↗</span></a>
@@ -35,6 +36,7 @@ nav: home
           <img src="assets/img/dr-mounika.jpg" alt="Dr. Thopicharla Mounika" width="279" height="359">
         </div>
         <div class="home-doctor-details">
+          <span class="founder-specialty">ENT Care</span>
           <h3>Dr. T. Mounika</h3>
           <p class="home-doctor-role">ENT, Head &amp; Neck Surgeon</p>
           <a href="dr-t-mounika.html" aria-label="View Dr. T. Mounika’s profile">View profile <span aria-hidden="true">↗</span></a>
@@ -46,6 +48,12 @@ nav: home
 </section>
 
 
+
+<div class="wrap care-metrics reveal" aria-label="Published clinical figures">
+  <div><strong data-metric="3500">3,500</strong><strong>+</strong><span>Patients cared for by Dr. Chetan</span></div>
+  <div><strong data-metric="25">25</strong><strong>+</strong><span>ENT camps attended by Dr. Mounika</span></div>
+  <div><strong data-metric="10">10</strong><strong>+</strong><span>Years of experience · Dr. Chetan</span></div>
+</div>
 
 <section class="section home-photo-section" aria-labelledby="home-photo-title">
   <div class="wrap home-photo-layout reveal">
@@ -63,40 +71,32 @@ nav: home
   </div>
 </section>
 
-<div class="wrap care-metrics reveal" aria-label="Published clinical figures">
-  <div><strong data-metric="3500">3,500</strong><strong>+</strong><span>Patients cared for by Dr. Chetan</span></div>
-  <div><strong data-metric="25">25</strong><strong>+</strong><span>ENT camps attended by Dr. Mounika</span></div>
-  <div><strong data-metric="10">10</strong><strong>+</strong><span>Years of experience · Dr. Chetan</span></div>
-</div>
-
 <section class="section home-services" aria-labelledby="services-title">
   <div class="wrap">
     <span class="eyebrow">What we treat</span>
     <h2 id="services-title" class="reveal">Services offered</h2>
-    <div class="home-service-grid">
-      <article class="card reveal">
-        <img class="service-photo-strip" src="https://images.unsplash.com/photo-1573497620053-ea5300f94f21?auto=format&amp;fit=crop&amp;w=240&amp;h=640&amp;q=82" alt="" width="240" height="640" loading="lazy">
-        <h3>Ear &amp; hearing care</h3>
-        <p>Ear infections, hearing concerns and dizziness.</p>
-        <a href="ent-care.html" aria-label="Explore ENT care: Ear &amp; hearing care">Explore ENT care ↗</a>
+    <div class="specialty-panels">
+      <article class="specialty-panel specialty-ent reveal" aria-labelledby="specialty-ent-title">
+        <header><img class="specialty-portrait" src="assets/img/specialty-ent.svg" alt="Ear, nose and throat illustration" width="96" height="96" loading="lazy"><div><h3 id="specialty-ent-title">ENT Care</h3><p>Ear, nose, throat, head and neck consultations with Dr. Mounika.</p></div></header>
+        <ul>
+          <li><a href="ent-care.html#ear">{{icon:ear}}<span>Ear &amp; hearing</span></a></li>
+          <li><a href="ent-care.html#nose">{{icon:sinus}}<span>Nose &amp; sinus</span></a></li>
+          <li><a href="ent-care.html#throat">{{icon:voice}}<span>Throat &amp; voice</span></a></li>
+          <li><a href="ent-care.html#neck">{{icon:shield}}<span>Head &amp; neck</span></a></li>
+          <li><a href="ent-care.html#clinic">{{icon:scope}}<span>ENT procedures</span></a></li>
+          <li><a href="ent-care.html#skull">{{icon:sinus}}<span>Rhinology &amp; skull base</span></a></li>
+        </ul>
       </article>
-      <article class="card reveal">
-        <img class="service-photo-strip" src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&amp;fit=crop&amp;w=240&amp;h=640&amp;q=82" alt="" width="240" height="640" loading="lazy">
-        <h3>Sinus, throat &amp; voice</h3>
-        <p>Nasal blockage, sinus concerns, tonsils and voice changes.</p>
-        <a href="ent-care.html" aria-label="Explore ENT care: Sinus, throat &amp; voice">Explore ENT care ↗</a>
-      </article>
-      <article class="card reveal">
-        <img class="service-photo-strip" src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&amp;fit=crop&amp;w=240&amp;h=640&amp;q=82" alt="" width="240" height="640" loading="lazy">
-        <h3>Kidney consultations</h3>
-        <p>Kidney test results, chronic kidney disease and kidney care for diabetes or high blood pressure.</p>
-        <a href="kidney-care.html" aria-label="Explore kidney care: Kidney consultations">Explore kidney care ↗</a>
-      </article>
-      <article class="card reveal">
-        <img class="service-photo-strip" src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&amp;fit=crop&amp;w=240&amp;h=640&amp;q=82" alt="" width="240" height="640" loading="lazy">
-        <h3>Dialysis &amp; transplant</h3>
-        <p>Dialysis planning, transplant evaluation and follow-up.</p>
-        <a href="kidney-care.html" aria-label="Explore kidney care: Dialysis &amp; transplant">Explore kidney care ↗</a>
+      <article class="specialty-panel specialty-kidney reveal" aria-labelledby="specialty-kidney-title">
+        <header><img class="specialty-portrait" src="assets/img/specialty-kidney.svg" alt="Kidney illustration" width="96" height="96" loading="lazy"><div><h3 id="specialty-kidney-title">Kidney Care</h3><p>Kidney evaluation and follow-up with Dr. Chetan.</p></div></header>
+        <ul>
+          <li><a href="kidney-care.html#ckd">{{icon:kidney}}<span>Kidney disease</span></a></li>
+          <li><a href="kidney-care.html#bp">{{icon:gauge}}<span>Diabetes &amp; blood pressure</span></a></li>
+          <li><a href="kidney-care.html#dialysis">{{icon:dialysis}}<span>Dialysis planning</span></a></li>
+          <li><a href="kidney-care.html#transplant">{{icon:transplant}}<span>Transplant follow-up</span></a></li>
+          <li><a href="kidney-care.html#procedures">{{icon:needle}}<span>Kidney procedures</span></a></li>
+          <li><a href="kidney-care.html#tests">{{icon:lab}}<span>Kidney health checks</span></a></li>
+        </ul>
       </article>
     </div>
   </div>

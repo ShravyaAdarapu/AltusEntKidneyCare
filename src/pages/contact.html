@@ -7,7 +7,11 @@ nav: contact
   <div class="wrap inner-photo-banner photo-contact">
     <div class="crumbs"><a href="index.html">Home</a> / Contact Us</div>
     <h1>Contact Us</h1>
-    <p class="lead">Unsure which doctor to see or how to find us? Call or message our front desk. We’ll help you plan your visit.</p>
+    <p class="lead">Ready to see a specialist? Choose ENT or Kidney Care and request a time. If you have a question first, call or message our front desk.</p>
+    <div class="btn-row contact-book-actions">
+      <a class="btn btn-light" href="book-appointment.html">{{icon:calendar}} Book an appointment</a>
+      <a class="btn btn-ghost-light" href="#contactForm">Ask a question</a>
+    </div>
   </div>
 </section>
 
@@ -34,7 +38,12 @@ nav: contact
             <li><a href="https://www.facebook.com/" target="_blank" rel="noopener" aria-label="Open Facebook"><span class="contact-method-icon contact-facebook">{{icon:facebook}}</span></a></li>
             <li><a href="https://www.linkedin.com/" target="_blank" rel="noopener" aria-label="Open LinkedIn"><span class="contact-method-icon contact-linkedin">{{icon:linkedin}}</span></a></li>
           </ul>
-          <address>{{site:addr1}}<br>{{site:addr2}}<br>{{site:city}}</address>
+          <address>
+            <a class="contact-directions" href="https://www.google.com/maps/search/?api=1&amp;query={{site:map_q}}" target="_blank" rel="noopener">
+              {{icon:pin}}
+              <span>{{site:addr1}}<br>{{site:addr2}}<br>{{site:city}}<strong>Get directions in Google Maps ↗</strong></span>
+            </a>
+          </address>
         </div>
         <div class="card contact-panel">
           <h2>Clinic hours</h2>
