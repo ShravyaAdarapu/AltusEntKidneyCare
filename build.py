@@ -120,7 +120,6 @@ NAV = [
     ("doctors", None, "Our Doctors", [
         ("dr-chetan-veeramaneni.html", "Dr. Chetan Veeramaneni", "Nephrologist & Renal Transplant Physician"),
         ("dr-t-mounika.html", "Dr. T. Mounika", "ENT, Head & Neck Surgeon"),
-        ("doctors.html", "Meet the team", "Both specialists at a glance"),
     ]),
     ("services", None, "Specialities", [
         ("kidney-care.html", "Kidney Care", "Nephrology, dialysis &amp; transplant"),

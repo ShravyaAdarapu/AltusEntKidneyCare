@@ -3,32 +3,45 @@ title: Contact & Directions | Altus ENT & Kidney Care, Shaikpet, Hyderabad
 description: Altus ENT & Kidney Care, 3rd Floor, AV Complex, beside Aparna One, Dwaraka Nagar Colony, Shaikpet, Hyderabad 500104. Appointments: 99668 81811.
 nav: contact
 -->
-<section class="page-hero banner-clinic">
-  <div class="wrap">
-    <div class="crumbs"><a href="index.html">Home</a> / Contact</div>
-    <span class="eyebrow">Contact</span>
-    <h1>Visit or reach us</h1>
-    <p class="lead">We're on the 3rd floor of AV Complex, beside Aparna One in Shaikpet, a short drive from Tolichowki, Film Nagar and Gachibowli.</p>
+<section class="page-hero contact-intro">
+  <div class="wrap contact-grid">
+    <div>
+      <div class="crumbs"><a href="index.html">Home</a> / Contact</div>
+      <h1>Contact Altus</h1>
+      <p class="lead">Ask about appointments or get directions to our ENT and kidney care clinic in Shaikpet.</p>
+    </div>
+    <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&amp;fit=crop&amp;w=1000&amp;h=380&amp;q=82" alt="Bright hospital corridor">
   </div>
 </section>
 
-<section class="section">
+<section class="section contact-section">
   <div class="wrap">
-    <div class="grid g3" style="margin-bottom:40px">
-      <a class="card reveal" href="tel:{{site:phone_raw}}"><div class="ico">{{icon:phone}}</div><h4>Appointments</h4><p style="font-size:1.2rem;color:var(--brown-800)">{{site:phone}}</p><span class="more">Call now</span></a>
-      <a class="card reveal" href="https://wa.me/{{site:wa}}" target="_blank" rel="noopener"><div class="ico">{{icon:whatsapp}}</div><h4>WhatsApp</h4><p style="font-size:1.2rem;color:var(--brown-800)">{{site:phone}}</p><span class="more">Start a chat</span></a>
-      <a class="card reveal" href="mailto:{{site:email}}"><div class="ico">{{icon:mail}}</div><h4>Email</h4><p style="color:var(--brown-800);word-break:break-all">{{site:email}}</p><span class="more">Write to us</span></a>
-    </div>
-    <div class="two-col">
-      <div class="reveal">
-        <h3>Address</h3>
-        <p class="lead">Altus ENT &amp; Kidney Care<br>{{site:addr1}},<br>{{site:addr2}},<br>{{site:city}}</p>
-        <div class="btn-row" style="margin-bottom:36px"><a class="btn btn-primary" href="https://www.google.com/maps/search/?api=1&query={{site:map_q}}" target="_blank" rel="noopener">{{icon:pin}} Open in Google Maps</a></div>
-        <h3>Clinic hours</h3>
-        {{part:timings}}
-        <p class="form-note" style="margin-top:14px">Lift access and parking available in the AV Complex building.</p>
+    <div class="contact-grid contact-panels">
+      <form class="card contact-panel" id="contactForm" data-whatsapp="{{site:wa}}">
+        <h2>Get in touch</h2>
+        <div class="contact-fields">
+          <label>Name <input name="name" autocomplete="name" required maxlength="100"></label>
+          <label>Phone <input name="phone" type="tel" autocomplete="tel" required maxlength="25"></label>
+        </div>
+        <label>Message <textarea name="message" rows="4" required maxlength="600" placeholder="How can we help?"></textarea></label>
+        <button class="btn btn-primary" type="submit">Continue to WhatsApp</button>
+      </form>
+      <div class="contact-info">
+        <div class="card contact-panel">
+          <h2>Clinic details</h2>
+          <ul class="contact-methods">
+            <li><a href="tel:{{site:phone_raw}}" aria-label="Call {{site:phone}}" title="{{site:phone}}"><span class="contact-method-icon">{{icon:phone}}</span></a></li>
+            <li><a href="mailto:{{site:email}}" aria-label="Email {{site:email}}" title="{{site:email}}"><span class="contact-method-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285f4" d="M2 7l4 3v10H2z"/><path fill="#34a853" d="M18 10l4-3v13h-4z"/><path fill="#ea4335" d="M6 5l6 5 6-5v5l-6 5-6-5z"/><path fill="#c5221f" d="M2 5l4 0v5L2 7z"/><path fill="#fbbc04" d="M18 5h4v2l-4 3z"/></svg></span></a></li>
+            <li><span class="contact-method-pending"><span class="contact-method-icon contact-instagram" role="img" aria-label="Instagram">{{icon:instagram}}</span></span></li>
+            <li><span class="contact-method-pending"><span class="contact-method-icon contact-youtube" role="img" aria-label="YouTube">{{icon:youtube}}</span></span></li>
+          </ul>
+          <address>{{site:addr1}}<br>{{site:addr2}}<br>{{site:city}}</address>
+        </div>
+        <div class="card contact-panel">
+          <h2>Clinic hours</h2>
+          {{part:timings}}
+        </div>
       </div>
-      <div class="map reveal"><iframe title="Map to Altus ENT &amp; Kidney Care" loading="lazy" src="https://maps.google.com/maps?q={{site:map_q}}&z=16&output=embed"></iframe></div>
     </div>
   </div>
 </section>

@@ -57,3 +57,37 @@
     window.open(url, '_blank', 'noopener');
   });
 })();
+
+{
+  const contactForm = document.getElementById('contactForm');
+  if (contactForm) {
+    contactForm.addEventListener('submit', event => {
+      event.preventDefault();
+      const fields = new FormData(contactForm);
+      const message = ['Hello Altus, I have a question.', 'Name: ' + fields.get('name'),
+        'Phone: ' + fields.get('phone'), 'Message: ' + fields.get('message')].join('\n');
+      window.open('https://wa.me/' + contactForm.dataset.whatsapp + '?text=' + encodeURIComponent(message), '_blank', 'noopener');
+    });
+  }
+}
+
+{
+  const metrics = document.querySelector('.care-metrics');
+  if (metrics && 'IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const observer = new IntersectionObserver(entries => {
+      if (!entries[0].isIntersecting) return;
+      observer.disconnect();
+      const numbers = [...metrics.querySelectorAll('[data-metric]')];
+      const start = performance.now();
+      function render(now) {
+        const progress = Math.min(1, (now - start) / 850);
+        numbers.forEach(number => {
+          number.textContent = Math.round(Number(number.dataset.metric) * (1 - (1 - progress) ** 3)).toLocaleString('en-IN');
+        });
+        if (progress < 1) requestAnimationFrame(render);
+      }
+      requestAnimationFrame(render);
+    });
+    observer.observe(metrics);
+  }
+}
