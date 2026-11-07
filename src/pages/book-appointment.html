@@ -32,12 +32,11 @@ nav: book
         <div><label for="f-doctor">Doctor</label>
           <select id="f-doctor" name="doctor"><option>Dr. Chetan Veeramaneni</option><option>Dr. T. Mounika Rao</option></select></div>
         <div class="full" id="bookingPicker">
+          <div id="bookingDateFallback"><label for="f-date">Preferred date *</label><input id="f-date" name="date" type="date" required></div>
           <div id="bookingCalendar" hidden></div>
           <p id="bookingSlotStatus" role="status" class="form-note"></p>
-          <div id="bookingDateFallback"><label for="f-date">Preferred date *</label><input id="f-date" name="date" type="date" required></div>
-          <div id="bookingTimeFallback"><label for="f-slot">Preferred time</label>
-            <select id="f-slot" name="slot"><option>6:00 PM</option><option>6:30 PM</option><option>7:00 PM</option><option>7:30 PM</option><option>8:00 PM</option><option>8:30 PM</option><option>9:00 PM</option><option>9:30 PM</option></select>
-          </div>
+          <div id="bookingTimeFallback" hidden><input id="f-slot" name="slot" type="hidden"></div>
+          <noscript>Please enable JavaScript to choose a date and time, or call 99668 81811.</noscript>
         </div>
         <div class="full"><label for="f-visit">Visit type</label>
           <select id="f-visit" name="visit"><option>First consultation</option><option>Follow-up</option><option>Second opinion</option><option>Report review</option></select></div>

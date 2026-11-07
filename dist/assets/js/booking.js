@@ -30,42 +30,53 @@
   const calendar=document.querySelector('#bookingCalendar'), note=document.querySelector('#bookingSlotStatus');
   const dateInput=form.elements.date, doctor=form.elements.doctor, timeInput=form.elements.slot, submit=form.querySelector('[type=submit]');
   const slug=()=>doctor.selectedIndex===1?'mounika':'chetan';
-  const key=keyFor(); let today='',max='',selected='',visible,slots=[],minute=null,sequence=0,loading=true;
+  const key=keyFor(); let today='',max='',selected='',visible,slots=[],minute=null,sequence=0,loading=true,ready=false;
   const dateKey=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
   function render() {
-    const y=visible.getFullYear(),m=visible.getMonth(),first=dateKey(visible).slice(0,7);
-    calendar.innerHTML=`<div class="booking-calendar-panel"><div class="booking-month"><strong>${visible.toLocaleDateString('en-IN',{month:'long',year:'numeric'})}</strong><div><button type="button" data-month="-1" aria-label="Previous month" ${first<=today.slice(0,7)?'disabled':''}>‹</button><button type="button" data-month="1" aria-label="Next month" ${first>=max.slice(0,7)?'disabled':''}>›</button></div></div><div class="booking-days">${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>'<span>'+d+'</span>').join('')}${'<span></span>'.repeat(visible.getDay())}${Array.from({length:new Date(y,m+1,0).getDate()},(_,i)=>{const d=dateKey(new Date(y,m,i+1));return `<button type="button" data-date="${d}" aria-label="${d}" aria-pressed="${d===selected}" ${d<today||d>max?'disabled':''}>${i+1}</button>`;}).join('')}</div></div><strong class="booking-time-label">Available times · India time</strong><div class="booking-times"></div>`;
+    calendar.innerHTML='<strong class="booking-time-label">Preferred time · India time</strong><div class="booking-times"></div>';
+    dateInput.min=today;dateInput.max=max;
     const times=calendar.querySelector('.booking-times');
-    slots.forEach(slot=>{const b=document.createElement('button');b.type='button';b.textContent=slot.label;b.dataset.time=slot.minute;b.setAttribute('aria-pressed',String(slot.minute===minute));b.disabled=loading;times.append(b);});
+    slots.forEach(slot=>{const b=document.createElement('button');b.type='button';b.textContent=slot.label;b.dataset.time=slot.minute;b.setAttribute('aria-pressed',String(slot.minute===minute));b.disabled=loading||!ready;times.append(b);});
     if(!slots.length) times.textContent=loading?'Checking availability…':'No available times. Please choose another date.';
-    dateInput.value=selected; submit.disabled=loading||minute===null;
+    dateInput.value=selected; submit.disabled=loading||!ready||minute===null;
   }
   async function load() {
     const seq=++sequence; loading=true; slots=[]; minute=null; render(); note.textContent='';
-    try { const data=await api('availability&doctor='+encodeURIComponent(slug())+'&date='+selected); if(seq!==sequence)return; today=data.today; slots=data.slots; }
-    catch(error){if(seq!==sequence)return;note.textContent=error.message;}
+    try { if(!ready){const setup=await api('bootstrap');if(seq!==sequence)return;csrf=setup.csrf;today=setup.today;max=setup.max_date;ready=true;if(selected<today)selected=today;} const data=await api('availability&doctor='+encodeURIComponent(slug())+'&date='+selected); if(seq!==sequence)return; today=data.today; slots=data.slots; }
+    catch(error){if(seq!==sequence)return;ready=false;slots=previewTimes();note.textContent=error.message;}
     loading=false;render();
   }
+  dateInput.addEventListener('change',()=>{
+    if(!dateInput.value||!dateInput.checkValidity())return;
+    selected=dateInput.value;load();
+  });
   calendar.addEventListener('click',event=>{
-    const b=event.target.closest('button');if(!b||b.disabled)return;
-    if(b.dataset.month){visible=new Date(visible.getFullYear(),visible.getMonth()+Number(b.dataset.month),1);render();}
-    if(b.dataset.date){selected=b.dataset.date;load();}
-    if(b.dataset.time){minute=Number(b.dataset.time);timeInput.value=slots.find(s=>s.minute===minute).label;render();calendar.querySelector('[data-time="'+minute+'"]').focus();}
+    const button=event.target.closest('[data-time]');if(!button||button.disabled)return;
+    minute=Number(button.dataset.time);timeInput.value=slots.find(s=>s.minute===minute).label;
+    render();calendar.querySelector('[data-time="'+minute+'"]').focus();
   });
   form.querySelectorAll('[name=specialty]').forEach(r=>r.addEventListener('change',()=>{doctor.selectedIndex=r.id==='spec-ent'?1:0;if(today)load();}));
   doctor.addEventListener('change',()=>{document.querySelector(slug()==='mounika'?'#spec-ent':'#spec-kidney').checked=true;if(today)load();});
   if(new URLSearchParams(location.search).get('s')==='ent'){doctor.selectedIndex=1;document.querySelector('#spec-ent').checked=true;}
-  submit.disabled=true;
+  function previewTimes() {
+    return Array.from({length:8},(_,i)=>({minute:1080+i*30,label:(6+Math.floor(i/2))+':'+(i%2?'30':'00')+' PM'}));
+  }
+  // Present the picker immediately, even while the booking service is offline.
+  const indiaDate=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'});
+  const parts=Object.fromEntries(indiaDate.formatToParts(new Date()).map(p=>[p.type,p.value]));
+  today=parts.year+'-'+parts.month+'-'+parts.day;selected=today;
+  visible=new Date(today+'T12:00:00');visible.setDate(1);
+  const limit=new Date(today+'T12:00:00');limit.setDate(limit.getDate()+90);max=dateKey(limit);
+  dateInput.required=true;document.querySelector('#bookingDateFallback').hidden=false;
+  document.querySelector('#bookingTimeFallback').hidden=true;calendar.hidden=false;slots=previewTimes();render();
   boot.then(data=>{
-    today=data.today;max=data.max_date;selected=today;visible=new Date(today+'T12:00:00');visible.setDate(1);
-    dateInput.required=false;document.querySelector('#bookingDateFallback').hidden=true;document.querySelector('#bookingTimeFallback').hidden=true;
-    calendar.hidden=false;load();
-  }).catch(error=>{note.textContent=error.message;});
+    ready=true;today=data.today;max=data.max_date;selected=today;visible=new Date(today+'T12:00:00');visible.setDate(1);load();
+  }).catch(error=>{loading=false;ready=false;slots=previewTimes();render();note.textContent=error.message;});
   form.addEventListener('submit',async event=>{
     event.preventDefault();if(!form.reportValidity()||loading||minute===null)return;
     submit.disabled=true; const success=document.querySelector('#formSuccess');success.classList.remove('show');
     const fields=new FormData(form),body={name:fields.get('name'),phone:fields.get('phone'),age:fields.get('age')===''?null:Number(fields.get('age')),doctor:slug(),date:selected,minute,visit:fields.get('visit'),message:fields.get('message'),website:fields.get('website')};body.request_key=key(body);
     try {const result=await api('book',body);success.textContent='Your appointment request has been saved. Reference: '+result.reference+'. Our front desk will confirm your visit. Please call 99668 81811 if you need help.';success.classList.add('show');form.elements.message.value='';await load();}
-    catch(error){await load();note.textContent=error.message;}finally{submit.disabled=loading||minute===null;}
+    catch(error){await load();note.textContent=error.message;}finally{submit.disabled=loading||!ready||minute===null;}
   });
 })();
