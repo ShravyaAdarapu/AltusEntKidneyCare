@@ -98,9 +98,10 @@ LOGO = """<svg class="mark" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/
 BRAND = f"""<a href="index.html" class="brand" aria-label="Altus ENT &amp; Kidney Care home">{LOGO}
 <span class="brand-text"><strong>ALTUS</strong><small>ENT &amp; Kidney Care</small></span></a>"""
 
-# Opening hours are placeholders until the doctors confirm OPD timings.
+# Clinic-confirmed consultation hours.
 TIMINGS = """<table class="timings">
-<tr><td>Booking window</td><td>6:00 PM – 10:00 PM IST</td></tr>
+<tr><td>Monday – Saturday</td><td>6:00 PM – 10:00 PM IST</td></tr>
+<tr><td>Sunday</td><td>Closed</td></tr>
 </table>"""
 
 PARTS = {

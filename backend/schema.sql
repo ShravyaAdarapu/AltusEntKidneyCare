@@ -69,6 +69,6 @@ CREATE TABLE IF NOT EXISTS rate_limits (
 INSERT IGNORE INTO doctors (slug, name, specialty) VALUES
 ('chetan', 'Dr. Chetan Veeramaneni', 'Kidney Care'),
 ('mounika', 'Dr. T. Mounika Rao', 'ENT Care');
-INSERT IGNORE INTO weekly_hours (doctor_id, weekday)
-SELECT d.id, days.day FROM doctors d CROSS JOIN
+INSERT IGNORE INTO weekly_hours (doctor_id, weekday, is_open)
+SELECT d.id, days.day, (days.day <> 0) FROM doctors d CROSS JOIN
 (SELECT 0 AS day UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6) days;

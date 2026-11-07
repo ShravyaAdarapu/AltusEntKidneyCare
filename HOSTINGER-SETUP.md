@@ -3,7 +3,7 @@
 This package uses PHP 8.2+ and MySQL with PDO MySQL enabled. No payment integration is included.
 
 1. Upload `altus-website.zip` and extract its contents directly into the site's `public_html`. `index.html`, `api` and `admin` must be directly inside `public_html`, without a nested `dist` directory.
-2. In hPanel, create a MySQL database and user. In phpMyAdmin import `backend/schema.sql` into that database. It seeds both doctors, with 30-minute slots between 6 PM and 10 PM on every day. Change these through the staff dashboard when the clinic confirms the schedule.
+2. In hPanel, create a MySQL database and user. In phpMyAdmin import `backend/schema.sql` into that database. It seeds both doctors, with 30-minute slots between 6 PM and 10 PM Monday–Saturday, with Sunday closed. Change these through the staff dashboard when the clinic confirms the schedule.
 3. Create an `altus-private` folder alongside (not inside) `public_html`. Copy `backend/private/config.example.php` there as `config.php`. Fill in the database name, username and password. Keep this file outside public access.
 4. Generate a secret: `php -r "echo bin2hex(random_bytes(32));"`. Generate the staff password hash locally using `php backend/bin/password.php`. Put the results in `secret` and `admin_hash`. Choose a staff username. Do not upload the password helper or publish credentials.
 5. Enable SSL for the domain and leave `require_https` true. Choose PHP 8.2 or newer, with PDO MySQL enabled. The API uses the configuration at `../altus-private/config.php` relative to `public_html`. If your hosting directory differs, set the `ALTUS_CONFIG` environment variable to the private file's absolute path.
