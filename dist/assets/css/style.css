@@ -1677,3 +1677,96 @@ main:has(> .patient-info-intro) .cta-band { padding: clamp(18px, 3vw, 38px); gap
 .gallery-reading-panel summary::-webkit-details-marker { display: none; }
 .gallery-reading-panel summary::after { content: "+"; color: #80583e; }
 .gallery-reading-panel details[open] summary::after { content: "−"; }
+
+.doctor-official-socials { display: flex; flex-wrap: wrap; gap: 12px; margin: 10px 0; }
+.doctor-official-socials a { display: inline-flex; align-items: center; gap: 6px; text-decoration: underline; }
+.doctor-official-socials svg { width: 18px; height: 18px; }
+.ent-sign-services { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px 24px; margin: 0; padding-inline-start: 18px; color: var(--brown-800); }
+@media (max-width: 540px) { .ent-sign-services { grid-template-columns: 1fr; } }
+
+.footer-bottom .powered-by { display: inline-flex; align-items: center; gap: 6px; font-size: .75rem; }
+.footer-bottom .powered-by a { display: inline-flex; padding: 3px 6px; border-radius: 4px; background: #e6ccb2; opacity: .75; }
+.powered-by img { display: block; width: 76px; height: auto; }
+
+/* About Altus: three compact sections. */
+main > .about-three-intro { padding-block: clamp(22px, 3vw, 42px); border: 0; background: #faf5ef; }
+.about-three-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: clamp(18px, 4vw, 52px); align-items: center; }
+.about-three-intro h1 { font: 500 clamp(2.3rem, 4.7vw, 4.2rem)/1.05 var(--serif); letter-spacing: -.035em; margin: 8px 0 12px; }
+.about-three-lead { font-size: clamp(1.12rem, 2vw, 1.5rem); line-height: 1.35; color: #503522; margin-bottom: 10px; max-width: 30ch; }
+.about-three-intro p:not(.about-three-lead), .about-three-visit p { margin-bottom: 12px; max-width: 62ch; }
+.about-three-text-link { color: #67452f; font-weight: 600; text-decoration: underline; text-underline-offset: 4px; }
+.about-three-portraits { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; width: min(100%, 380px); justify-self: end; margin: 0; }
+.about-three-portraits a { color: #503522; font-size: .85rem; font-weight: 600; }
+.about-three-portraits img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: center top; border-radius: 9px; margin-bottom: 7px; background: #ede0d4; }
+.about-three-portraits a:is(:hover,:focus-visible) > span { text-decoration: underline; }
+.about-three-care { background: #ede0d4; padding-block: clamp(22px, 3vw, 36px); }
+.about-three-care h2, .about-three-visit h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); line-height: 1.15; margin: 0 0 14px; letter-spacing: -.025em; }
+.about-three-specialists { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: clamp(18px, 4vw, 52px); }
+.about-three-specialists article { display: flex; flex-direction: column; align-items: start; padding-top: 12px; border-top: 1px solid #b08968; }
+.about-three-label { color: #795439; font-size: .76rem; text-transform: uppercase; letter-spacing: .1em; }
+.about-three-specialists h3 { font-size: clamp(1.12rem, 2vw, 1.4rem); margin: 5px 0; }
+.about-three-specialists p { margin: 0 0 10px; }
+.about-three-qualification { color: #67452f; font-size: .85rem; font-weight: 600; }
+.about-three-training { color: #705440; font-size: .88rem; }
+.about-three-specialists .about-three-text-link { margin-top: auto; }
+.about-three-visit { padding-block: clamp(22px, 3vw, 36px); background: #faf5ef; }
+.about-three-book { border-inline-start: 2px solid #b08968; padding-inline-start: clamp(14px, 2.5vw, 28px); }
+.about-three-book h3 { font-size: 1.2rem; margin: 0 0 8px; }
+.about-three-book p { font-size: .91rem; }
+.about-three-book .btn-row { align-items: center; }
+.about-three-call { display: inline-flex; align-items: center; gap: 6px; color: #503522; white-space: nowrap; }
+.about-three-call svg { width: 18px; height: 18px; }
+@media (max-width: 680px) {
+  .about-three-grid, .about-three-specialists { grid-template-columns: minmax(0,1fr); }
+  .about-three-portraits { justify-self: start; width: min(100%, 340px); }
+}
+
+.photo-about-us { --page-image: url("https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1400&q=82"); }
+.about-three-specialists article { display: flow-root; }
+.about-meet-portrait { float: left; width: clamp(76px, 10vw, 112px); height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: center top; border-radius: 9px; margin: 0 14px 8px 0; background: #faf5ef; }
+.about-three-specialists .about-three-qualification { min-height: 2.4em; }
+@media (max-width: 680px) { .about-meet-portrait { width: 84px; } }
+
+.about-detail-section { padding-block: clamp(20px, 3vw, 34px); background: #faf5ef; }
+.about-detail-kidney { background: #f2e6da; }
+.about-detail-layout { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: clamp(18px, 4vw, 52px); align-items: center; }
+.about-detail-layout h2 { font-size: clamp(1.4rem, 2.8vw, 2rem); line-height: 1.15; margin: 7px 0 10px; }
+.about-detail-layout p { margin-bottom: 10px; }
+.about-detail-layout ul { display: grid; gap: 7px; margin: 0; padding-inline-start: 18px; }
+@media (max-width: 680px) { .about-detail-layout { grid-template-columns: 1fr; } }
+
+.about-three-care > .wrap,
+.about-detail-section > .wrap,
+.about-three-visit > .wrap {
+  width: min(94vw, 1360px);
+}
+
+main:has(> .page-hero) > .doctor-profile-overview { padding-bottom: 8px; }
+.doctor-profile-overview h2 { font-size: clamp(1.25rem, 2.5vw, 1.8rem); margin-bottom: 8px; }
+.doctor-profile-overview p { max-width: 95ch; margin-bottom: 8px; }
+main:has(> .page-hero) > .doctor-profile-details { padding-top: 8px; }
+.doctor-accordion details { border-bottom: 1px solid #c5a181; }
+.doctor-accordion details:first-child { border-top: 1px solid #c5a181; }
+.doctor-accordion summary { list-style: none; display: grid; grid-template-columns: 24px minmax(0,1fr) 20px; gap: 12px; align-items: center; padding: 15px 4px; color: #503522; cursor: pointer; font-weight: 600; }
+.doctor-accordion summary::-webkit-details-marker { display: none; }
+.doctor-accordion summary::after { content: "+"; justify-self: center; font-size: 1.3rem; font-weight: 400; }
+.doctor-accordion details[open] summary::after { content: "−"; }
+.doctor-accordion summary svg { width: 22px; height: 22px; color: #906344; }
+.doctor-accordion details[open] { background: #f5e9dc; }
+.doctor-accordion-content { padding: 0 clamp(12px,3vw,40px) 16px; }
+.doctor-expertise-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
+.doctor-expertise-grid .card { padding: 14px; box-shadow: none; background: #fff8ee; }
+.doctor-expertise-grid h3 { font-size: 1.1rem; }
+.doctor-accordion .cred-list { margin: 0; }
+@media (max-width: 760px) { .doctor-expertise-grid { grid-template-columns: 1fr; } }
+
+.inner-photo-banner.photo-profile { padding-block: clamp(18px, 2.2vw, 30px); }
+.photo-profile .profile-hero { grid-template-columns: clamp(190px, 19vw, 280px) minmax(0,1fr); gap: clamp(20px, 3.5vw, 44px); }
+.photo-profile h1 { font-size: clamp(1.9rem, 3.7vw, 3.65rem); }
+.photo-profile .lead { font-size: 1.08rem; }
+@media (max-width: 760px) {
+  .photo-profile .profile-hero { grid-template-columns: 1fr; gap: 18px; }
+  .photo-profile .profile-hero .portrait { width: min(100%, 220px); }
+}
+
+.form-trap{position:absolute!important;left:-10000px;width:1px;height:1px;overflow:hidden}

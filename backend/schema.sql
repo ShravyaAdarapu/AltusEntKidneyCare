@@ -1,0 +1,74 @@
+CREATE TABLE IF NOT EXISTS doctors (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  slug VARCHAR(30) NOT NULL UNIQUE,
+  name VARCHAR(100) NOT NULL,
+  specialty VARCHAR(50) NOT NULL,
+  active BOOLEAN NOT NULL DEFAULT TRUE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS weekly_hours (
+  doctor_id INT UNSIGNED NOT NULL,
+  weekday TINYINT UNSIGNED NOT NULL,
+  is_open BOOLEAN NOT NULL DEFAULT TRUE,
+  start_minute SMALLINT UNSIGNED NOT NULL DEFAULT 1080,
+  end_minute SMALLINT UNSIGNED NOT NULL DEFAULT 1320,
+  PRIMARY KEY (doctor_id, weekday),
+  FOREIGN KEY (doctor_id) REFERENCES doctors(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS closed_dates (
+  doctor_id INT UNSIGNED NOT NULL,
+  closed_date DATE NOT NULL,
+  PRIMARY KEY (doctor_id, closed_date),
+  FOREIGN KEY (doctor_id) REFERENCES doctors(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS appointments (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  reference VARCHAR(30) NOT NULL UNIQUE,
+  request_key VARCHAR(64) NOT NULL UNIQUE,
+  fingerprint CHAR(64) NOT NULL,
+  doctor_id INT UNSIGNED NOT NULL,
+  visit_date DATE NOT NULL,
+  start_minute SMALLINT UNSIGNED NOT NULL,
+  patient_name VARCHAR(100) NOT NULL,
+  phone VARCHAR(25) NOT NULL,
+  age TINYINT UNSIGNED NULL,
+  visit_type VARCHAR(40) NOT NULL,
+  concern TEXT NOT NULL,
+  status ENUM('requested','confirmed','cancelled','completed') NOT NULL DEFAULT 'requested',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX (visit_date, doctor_id),
+  FOREIGN KEY (doctor_id) REFERENCES doctors(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS reservations (
+  doctor_id INT UNSIGNED NOT NULL,
+  visit_date DATE NOT NULL,
+  start_minute SMALLINT UNSIGNED NOT NULL,
+  appointment_id BIGINT UNSIGNED NOT NULL UNIQUE,
+  PRIMARY KEY (doctor_id, visit_date, start_minute),
+  FOREIGN KEY (doctor_id) REFERENCES doctors(id),
+  FOREIGN KEY (appointment_id) REFERENCES appointments(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS enquiries (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  reference VARCHAR(30) NOT NULL UNIQUE,
+  request_key VARCHAR(64) NOT NULL UNIQUE,
+  patient_name VARCHAR(100) NOT NULL,
+  phone VARCHAR(25) NOT NULL,
+  message TEXT NOT NULL,
+  is_resolved BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS rate_limits (
+  rate_key CHAR(64) NOT NULL,
+  bucket BIGINT UNSIGNED NOT NULL,
+  hits INT UNSIGNED NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (rate_key, bucket),
+  INDEX(created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT IGNORE INTO doctors (slug, name, specialty) VALUES
+('chetan', 'Dr. Chetan Veeramaneni', 'Kidney Care'),
+('mounika', 'Dr. T. Mounika Rao', 'ENT Care');
+INSERT IGNORE INTO weekly_hours (doctor_id, weekday)
+SELECT d.id, days.day FROM doctors d CROSS JOIN
+(SELECT 0 AS day UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6) days;

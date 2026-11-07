@@ -1,0 +1,8 @@
+altus-private/
+backend/private/config.php
+backend/private/*.local.php
+backend/private/*.log
+backend/private/*.sqlite*
+__pycache__/
+*.zip
+.deploy-private/

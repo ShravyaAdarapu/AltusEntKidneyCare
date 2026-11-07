@@ -19,13 +19,14 @@ nav: contact
   <div class="wrap">
     <div class="contact-grid contact-panels">
       <form class="card contact-panel" id="contactForm" data-whatsapp="{{site:wa}}">
+<label class="form-trap" aria-hidden="true">Leave empty<input name="website" tabindex="-1" autocomplete="off"></label>
         <h2>Get in touch</h2>
         <div class="contact-fields">
           <label>Name <input name="name" autocomplete="name" required maxlength="100"></label>
           <label>Phone <input name="phone" type="tel" autocomplete="tel" required maxlength="25"></label>
         </div>
         <label>Message <textarea name="message" rows="4" required maxlength="600" placeholder="How can we help?"></textarea></label>
-        <button class="btn btn-primary" type="submit">Continue to WhatsApp</button>
+        <button class="btn btn-primary" type="submit">Send enquiry</button>
       </form>
       <div class="contact-info">
         <div class="card contact-panel">
@@ -33,9 +34,9 @@ nav: contact
           <ul class="contact-methods">
             <li><a href="tel:{{site:phone_raw}}" aria-label="Call {{site:phone}}" title="{{site:phone}}"><span class="contact-method-icon">{{icon:phone}}</span></a></li>
             <li><a href="mailto:{{site:email}}" aria-label="Email {{site:email}}" title="{{site:email}}"><span class="contact-method-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285f4" d="M2 7l4 3v10H2z"/><path fill="#34a853" d="M18 10l4-3v13h-4z"/><path fill="#ea4335" d="M6 5l6 5 6-5v5l-6 5-6-5z"/><path fill="#c5221f" d="M2 5l4 0v5L2 7z"/><path fill="#fbbc04" d="M18 5h4v2l-4 3z"/></svg></span></a></li>
-            <li><a href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="Open Instagram"><span class="contact-method-icon contact-instagram">{{icon:instagram}}</span></a></li>
-            <li><a href="https://www.youtube.com/" target="_blank" rel="noopener" aria-label="Open YouTube"><span class="contact-method-icon contact-youtube">{{icon:youtube}}</span></a></li>
-            <li><a href="https://www.facebook.com/" target="_blank" rel="noopener" aria-label="Open Facebook"><span class="contact-method-icon contact-facebook">{{icon:facebook}}</span></a></li>
+            <li><a href="{{site:instagram}}" target="_blank" rel="noopener" aria-label="Open Instagram"><span class="contact-method-icon contact-instagram">{{icon:instagram}}</span></a></li>
+            <li><a href="{{site:youtube}}" target="_blank" rel="noopener" aria-label="Open YouTube"><span class="contact-method-icon contact-youtube">{{icon:youtube}}</span></a></li>
+            <li><a href="{{site:facebook}}" target="_blank" rel="noopener" aria-label="Open Facebook"><span class="contact-method-icon contact-facebook">{{icon:facebook}}</span></a></li>
             <li><a href="https://www.linkedin.com/" target="_blank" rel="noopener" aria-label="Open LinkedIn"><span class="contact-method-icon contact-linkedin">{{icon:linkedin}}</span></a></li>
           </ul>
           <address>

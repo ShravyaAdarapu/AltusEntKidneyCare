@@ -27,6 +27,11 @@ SITE = {
     "phone_raw": "+919966881811",
     "wa": "919966881811",
     "email": "altusentkidneycare@gmail.com",
+    "instagram": "https://www.instagram.com/altusentandkidneycare/",
+    "facebook": "https://www.facebook.com/AltusENTandKidenycare/",
+    "youtube": "https://www.youtube.com/@AltusENTKidneycare",
+    "mounika_instagram": "https://www.instagram.com/drtmounika.entsurgeon/",
+    "mounika_facebook": "https://www.facebook.com/Dr.T.Mounika",
     "addr1": "3rd Floor, AV Complex, Beside Aparna One",
     "addr2": "Dwaraka Nagar Colony, Shaikpet",
     "city": "Hyderabad, Telangana 500104",
@@ -95,9 +100,7 @@ BRAND = f"""<a href="index.html" class="brand" aria-label="Altus ENT &amp; Kidne
 
 # Opening hours are placeholders until the doctors confirm OPD timings.
 TIMINGS = """<table class="timings">
-<tr><td>Booking window</td><td>10:00 AM – 7:00 PM IST</td></tr>
-<tr><td>Kidney Care OPD · Dr. Chetan</td><td>Mon, Wed, Fri</td></tr>
-<tr><td>ENT Care OPD · Dr. Mounika</td><td>Tue, Thu, Sat</td></tr>
+<tr><td>Booking window</td><td>6:00 PM – 10:00 PM IST</td></tr>
 </table>"""
 
 PARTS = {
@@ -120,7 +123,7 @@ NAV = [
     ("about", "about.html", "About"),
     ("doctors", None, "Our Doctors", [
         ("dr-chetan-veeramaneni.html", "Dr. Chetan Veeramaneni", "Nephrologist & Renal Transplant Physician"),
-        ("dr-t-mounika.html", "Dr. T. Mounika", "ENT, Head & Neck Surgeon"),
+        ("dr-t-mounika.html", "Dr. T. Mounika Rao", "ENT, Head & Neck Surgeon"),
     ]),
     ("services", None, "Specialities", [
         ("kidney-care.html", "Kidney Care", "Nephrology, dialysis &amp; transplant"),
@@ -179,11 +182,11 @@ LAYOUT = """<!doctype html>
 <footer class="site-footer"><div class="wrap">
 <div class="footer-grid">
 <div>{{{{part:brand}}}}
-<p>Specialist kidney and ENT care under one roof in Shaikpet, Hyderabad. Led by Dr. Chetan Veeramaneni and Dr. T. Mounika.</p>
+<p>Specialist kidney and ENT care under one roof in Shaikpet, Hyderabad. Led by Dr. Chetan Veeramaneni and Dr. T. Mounika Rao.</p>
 <div class="socials">
-<a href="#" aria-label="Instagram">{{{{icon:instagram}}}}</a>
-<a href="#" aria-label="YouTube">{{{{icon:youtube}}}}</a>
-<a href="#" aria-label="Facebook">{{{{icon:facebook}}}}</a>
+<a href="{{{{site:instagram}}}}" target="_blank" rel="noopener" aria-label="Instagram">{{{{icon:instagram}}}}</a>
+<a href="{{{{site:youtube}}}}" target="_blank" rel="noopener" aria-label="YouTube">{{{{icon:youtube}}}}</a>
+<a href="{{{{site:facebook}}}}" target="_blank" rel="noopener" aria-label="Facebook">{{{{icon:facebook}}}}</a>
 </div></div>
 <div><h4>Clinic</h4><ul>
 <li><a href="about.html">About Altus</a></li>
@@ -214,7 +217,7 @@ LAYOUT = """<!doctype html>
   <iframe title="Altus clinic location" loading="lazy" tabindex="-1" aria-hidden="true" src="https://maps.google.com/maps?q={{{{site:map_q}}}}&amp;z=16&amp;output=embed"></iframe>
   <span>{{{{icon:pin}}}} <strong>Altus ENT &amp; Kidney Care</strong><small>Open in Google Maps ↗</small></span>
 </a>
-<div class="footer-bottom"><span>© {{{{site:year}}}} Altus ENT &amp; Kidney Care. All rights reserved.</span><span>Website by Kathanika Media</span></div>
+<div class="footer-bottom"><span>© {{{{site:year}}}} Altus ENT &amp; Kidney Care. All rights reserved.</span><span class="powered-by">Powered by <a href="https://www.kathanika.in/" target="_blank" rel="noopener" aria-label="Kathanika Media"><img src="assets/img/kathanika-media.webp" alt="Kathanika Media" width="240" height="90" loading="lazy"></a></span></div>
 </div></footer>
 <div class="fab">
 <a class="wa" href="https://wa.me/{{{{site:wa}}}}?text=Hello%20Altus%2C%20I%27d%20like%20to%20book%20an%20appointment." target="_blank" rel="noopener" aria-label="Chat on WhatsApp">{{{{icon:whatsapp}}}}</a>
@@ -226,6 +229,7 @@ LAYOUT = """<!doctype html>
 <a class="primary" href="book-appointment.html">{{{{icon:calendar}}}}Book</a>
 </nav>
 <script src="assets/js/main.js?v={script_version}"></script>
+<script src="assets/js/booking.js?v={booking_version}"></script>
 </body>
 </html>
 """
@@ -234,7 +238,7 @@ SCHEMA = """{"@context":"https://schema.org","@type":"MedicalClinic","name":"Alt
 "telephone":"+91-9966881811","email":"altusentkidneycare@gmail.com",
 "address":{"@type":"PostalAddress","streetAddress":"3rd Floor, AV Complex, Beside Aparna One, Dwaraka Nagar Colony, Shaikpet","addressLocality":"Hyderabad","addressRegion":"Telangana","postalCode":"500104","addressCountry":"IN"},
 "medicalSpecialty":["Nephrology","Otolaryngologic"],
-"employee":[{"@type":"Physician","name":"Dr. Chetan Veeramaneni","medicalSpecialty":"Nephrology"},{"@type":"Physician","name":"Dr. T. Mounika","medicalSpecialty":"Otolaryngologic"}]}"""
+"employee":[{"@type":"Physician","name":"Dr. Chetan Veeramaneni","medicalSpecialty":"Nephrology"},{"@type":"Physician","name":"Dr. T. Mounika Rao","medicalSpecialty":"Otolaryngologic"}]}"""
 
 
 def render(text):
@@ -245,11 +249,20 @@ def render(text):
     return text
 
 
+def clean_page_links(html):
+    # Rewrite only local page links, retaining query strings and anchors.
+    return re.sub(r'(href=["\'])([a-z0-9-]+)\.html(?=[?#"\'])',
+                  lambda m: m.group(1) + ('/' if m.group(2) == 'index' else '/' + m.group(2)),
+                  html)
+
+
 def build():
     shutil.copytree(SRC / "assets", DIST / "assets", dirs_exist_ok=True)
+    shutil.copytree(Path(__file__).parent / "backend/public", DIST, dirs_exist_ok=True)
     (DIST / "assets" / "img").mkdir(exist_ok=True)
     (DIST / "assets" / "img" / "favicon.svg").write_text(LOGO.replace('class="mark" ', '').replace("currentColor", "#5c3d26"), encoding="utf-8")
     script_version = hashlib.sha256((SRC / "assets/js/main.js").read_bytes()).hexdigest()[:12]
+    booking_version = hashlib.sha256((SRC / "assets/js/booking.js").read_bytes()).hexdigest()[:12]
     style_version = hashlib.sha256((SRC / "assets/css/style.css").read_bytes()).hexdigest()[:12]
     for page in sorted((SRC / "pages").glob("*.html")):
         raw = page.read_text(encoding="utf-8")
@@ -257,8 +270,8 @@ def build():
         meta = dict(re.findall(r"^\s*(\w+):\s*(.+?)\s*$", m.group(1), re.M))
         body = raw[m.end():]
         html = LAYOUT.format(title=meta["title"], description=meta["description"],
-                             nav=nav_html(meta.get("nav", "")), body=body, schema=SCHEMA, script_version=script_version, style_version=style_version)
-        (DIST / page.name).write_text(render(html), encoding="utf-8")
+                             nav=nav_html(meta.get("nav", "")), body=body, schema=SCHEMA, script_version=script_version, style_version=style_version, booking_version=booking_version)
+        (DIST / page.name).write_text(clean_page_links(render(html)), encoding="utf-8")
         print("built", page.name)
 
 

@@ -1,0 +1,43 @@
+name: Deploy to Hostinger
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hostinger-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: hostinger-production
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build website from source
+        run: |
+          rm -rf dist
+          python build.py
+      - name: Check browser JavaScript and PHP
+        run: |
+          node --check dist/assets/js/main.js
+          node --check dist/assets/js/booking.js
+          node --check dist/admin/admin.js
+          find dist -name '*.php' -exec php -l {} \;
+      - name: Upload public files over SSH
+        env:
+          HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
+          HOSTINGER_PORT: ${{ secrets.HOSTINGER_PORT }}
+          HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
+          HOSTINGER_SSH_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
+          HOSTINGER_KNOWN_HOSTS: ${{ secrets.HOSTINGER_KNOWN_HOSTS }}
+          HOSTINGER_DEPLOY_PATH: ${{ secrets.HOSTINGER_DEPLOY_PATH }}
+        run: python scripts/deploy_hostinger.py
