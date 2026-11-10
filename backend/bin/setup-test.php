@@ -9,4 +9,7 @@ $db=new PDO('mysql:host=127.0.0.1;port=33317','root','');
 $db->exec('CREATE DATABASE IF NOT EXISTS altus_test CHARACTER SET utf8mb4');
 $db->exec('USE altus_test');
 $db->exec(file_get_contents(__DIR__.'/../schema.sql'));
+$q=$db->prepare('INSERT INTO staff_accounts(username,password_hash,display_name,role,doctor_id) VALUES(?,?,?,?,?) ON DUPLICATE KEY UPDATE password_hash=VALUES(password_hash),active=1');
+$q->execute(['testdesk',$config['admin_hash'],'Test Reception','reception',null]);
+foreach(['chetan','mounika'] as $slug){$id=$db->query("SELECT id FROM doctors WHERE slug=".$db->quote($slug))->fetchColumn();$q->execute(['test'.$slug,password_hash('Altus-doctor-test-only!',PASSWORD_DEFAULT),'Test '.$slug,'doctor',$id]);}
 echo "Isolated test database ready.\n";

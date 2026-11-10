@@ -45,3 +45,17 @@ One-time connection:
 5. Verify the live homepage and booking form after the first successful run. One-time database/configuration setup is still required. Workflow success only confirms file transfer, not database readiness.
 
 Uploads overwrite website files but do not delete unrelated remote files, execute SQL or alter the private configuration. If a page is intentionally removed, remove that obsolete file manually in Hostinger. Schema changes must be reviewed and applied separately through phpMyAdmin after backing up. Existing bookings persist across routine deployments.
+
+## Staff accounts and doctor dashboards
+
+Routes: `/admin/reception`, `/admin/dr.chetan`, `/admin/dr.mounika`. The `/admin/` entry sends a signed-in account to its workspace. Dashboard navigation never links to the public website.
+
+For existing installations, import `backend/staff-accounts.sql` before deploying the staff-account API. Provision one receptionist account and one account per doctor in `staff_accounts`, using PHP `password_hash` output, never plaintext. Link each doctor account to its doctor ID. On this installation, these accounts were provisioned privately over SSH; login details are in the ignored `.deploy-private` folder. Do not put login files or staff seeds in public_html or Git.
+
+Reception can view/manage both doctors. Doctors can view both in the shared reception workspace but can change appointments, create bookings and edit schedules only for their own doctor. Personal dashboard analytics and patient histories are scoped to their doctor by default. Shared reading is intentional and authorised; doctors cannot access contact enquiries.
+
+Accounts can change their own passwords in the dashboard. Password changes invalidate other sessions. Setting `active=0` in the account table revokes its sessions on the next protected request. Sessions have a 30-minute idle timeout and an 8-hour maximum duration. Passwords need at least 14 characters. A deployed account change requires signing in again.
+
+Appointment creation, status changes, rescheduling, schedule changes, enquiry updates and password changes are recorded in `audit_log` using staff/record IDs rather than copying patient concerns. Analytics are computed from saved bookings; they are not clinical outcomes or revenue reports. Public booking still creates pending requests and has no online payment or automatic messaging integration.
+
+Run `backend/bin/test-permissions.py` only with the isolated test PHP server on port 8094 and the disposable accounts from `setup-test.php`. The suite verifies doctor isolation and shared read-only behaviour, authorisation, input/CSRF checks, analytics scoping and session revocation.

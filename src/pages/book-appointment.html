@@ -26,7 +26,13 @@ nav: book
             <label for="spec-ent">{{icon:ear}}<div><b>ENT Care</b><span>Dr. T. Mounika Rao</span></div></label>
           </div>
         </div>
-        <div><label for="f-name">Patient name *</label><input id="f-name" name="name" required autocomplete="name" placeholder="Full name"></div>
+        <div class="full booking-doctor-summary" id="bookingDoctorSummary">
+          <img id="bookingDoctorPhoto" src="https://drchetanveeramaneni.com/wp-content/uploads/2024/09/Dr.-Chetan-Veeramaneni.jpg" alt="Dr. Chetan Veeramaneni" width="86" height="100">
+          <div><h2 id="bookingDoctorName">Dr. Chetan Veeramaneni</h2><p id="bookingDoctorSpecialty">Nephrologist &amp; Renal Transplant Physician</p><p id="bookingDoctorRegistration">NMR registration no. 93478</p><span>Shaikpet, Hyderabad</span></div>
+          <strong class="booking-fee">₹800<small>Consultation fee</small></strong>
+        </div>
+        <div class="full booking-followup"><span aria-hidden="true">✓</span> One free follow-up visit within 10 days.</div>
+        <div><label for="f-name">Patient name *</label><input id="f-name" name="name" required minlength="2" maxlength="100" autocomplete="name" placeholder="Full name"></div>
         <div><label for="f-phone">Mobile number *</label><input id="f-phone" name="phone" type="tel" required pattern="[0-9+\s]{10,14}" autocomplete="tel" placeholder="10-digit mobile"></div>
         <div><label for="f-age">Age</label><input id="f-age" name="age" type="number" min="0" max="120" placeholder="Years"></div>
         <div><label for="f-doctor">Doctor</label>
@@ -40,8 +46,9 @@ nav: book
         </div>
         <div class="full"><label for="f-visit">Visit type</label>
           <select id="f-visit" name="visit"><option>First consultation</option><option>Follow-up</option><option>Second opinion</option><option>Report review</option></select></div>
-<div class="full"><label for="f-msg">Briefly, what's the concern?</label><textarea id="f-msg" name="message" placeholder="e.g. high creatinine in recent tests, or blocked nose for 3 months"></textarea></div>
-        <div class="full btn-row" style="align-items:center">
+<div class="full"><label for="f-msg">Briefly, what's the concern?</label><textarea id="f-msg" name="message" maxlength="2000" placeholder="e.g. high creatinine in recent tests, or blocked nose for 3 months"></textarea></div>
+        <p class="full booking-selection" id="bookingSelection" role="status">Choose a date and time for your visit.</p>
+        <div class="full btn-row booking-submit" style="align-items:center">
           <button class="btn btn-primary" type="submit">{{icon:calendar}} Book an appointment</button>
         </div>
         <div class="full form-success" id="formSuccess" role="status"></div>

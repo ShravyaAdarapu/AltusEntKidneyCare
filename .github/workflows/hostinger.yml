@@ -31,7 +31,7 @@ jobs:
           node --check dist/assets/js/main.js
           node --check dist/assets/js/booking.js
           node --check dist/admin/admin.js
-          find dist -name '*.php' -exec php -l {} \;
+          find dist -name '*.php' -print0 | while IFS= read -r -d '' file; do php -l "$file" || exit 1; done
       - name: Upload public files over SSH
         env:
           HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}

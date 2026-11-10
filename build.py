@@ -223,6 +223,8 @@ LAYOUT = """<!doctype html>
 <div class="fab">
 <a class="wa" href="https://wa.me/{{{{site:wa}}}}?text=Hello%20Altus%2C%20I%27d%20like%20to%20book%20an%20appointment." target="_blank" rel="noopener" aria-label="Chat on WhatsApp">{{{{icon:whatsapp}}}}</a>
 <a class="call" href="tel:{{{{site:phone_raw}}}}" aria-label="Call the clinic">{{{{icon:phone}}}}</a>
+<a class="facebook" href="{{{{site:facebook}}}}" target="_blank" rel="noopener" aria-label="Altus on Facebook">{{{{icon:facebook}}}}</a>
+<a class="instagram" href="{{{{site:instagram}}}}" target="_blank" rel="noopener" aria-label="Altus on Instagram">{{{{icon:instagram}}}}</a>
 </div>
 <nav class="mobile-bar" aria-label="Quick actions">
 <a href="tel:{{{{site:phone_raw}}}}">{{{{icon:phone}}}}Call</a>

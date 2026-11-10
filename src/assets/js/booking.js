@@ -30,9 +30,23 @@
   const calendar=document.querySelector('#bookingCalendar'), note=document.querySelector('#bookingSlotStatus');
   const dateInput=form.elements.date, doctor=form.elements.doctor, timeInput=form.elements.slot, submit=form.querySelector('[type=submit]');
   const slug=()=>doctor.selectedIndex===1?'mounika':'chetan';
+  const doctorDetails={
+    chetan:{name:'Dr. Chetan Veeramaneni',specialty:'Nephrologist & Renal Transplant Physician',registration:'93478',photo:'https://drchetanveeramaneni.com/wp-content/uploads/2024/09/Dr.-Chetan-Veeramaneni.jpg'},
+    mounika:{name:'Dr. T. Mounika Rao',specialty:'ENT, Head & Neck Surgeon',registration:'89681',photo:'assets/img/dr-mounika.jpg'}
+  };
+  function updateDoctor(){
+    const detail=doctorDetails[slug()];
+    document.querySelector('#bookingDoctorName').textContent=detail.name;
+    document.querySelector('#bookingDoctorSpecialty').textContent=detail.specialty;
+    document.querySelector('#bookingDoctorRegistration').textContent='NMR registration no. '+detail.registration;
+    const photo=document.querySelector('#bookingDoctorPhoto');photo.src=detail.photo;photo.alt=detail.name;
+  }
   const key=keyFor(); let today='',max='',selected='',visible,slots=[],minute=null,sequence=0,loading=true,ready=false;
   const dateKey=d=>[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');
   function render() {
+    updateDoctor();
+    const selectedSlot=slots.find(s=>s.minute===minute);
+    document.querySelector('#bookingSelection').textContent=selectedSlot?'Selected: '+selected+' at '+selectedSlot.label+' · '+doctorDetails[slug()].name:'Choose a date and time for your visit.';
     calendar.innerHTML='<strong class="booking-time-label">Preferred time · India time</strong><div class="booking-times"></div>';
     dateInput.min=today;dateInput.max=max;
     const times=calendar.querySelector('.booking-times');

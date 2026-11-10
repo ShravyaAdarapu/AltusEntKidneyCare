@@ -1,0 +1,11 @@
+Options -Indexes -MultiViews
+RewriteEngine On
+RewriteRule ^(reception|dr\.chetan|dr\.mounika)/?$ index.html [L]
+<IfModule mod_headers.c>
+ Header always set Cache-Control "no-store, private"
+ Header always set X-Content-Type-Options "nosniff"
+ Header always set X-Frame-Options "DENY"
+ Header always set Referrer-Policy "same-origin"
+ Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+ Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https://drchetanveeramaneni.com; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
+</IfModule>

@@ -1770,3 +1770,15 @@ main:has(> .page-hero) > .doctor-profile-details { padding-top: 8px; }
 }
 
 .form-trap{position:absolute!important;left:-10000px;width:1px;height:1px;overflow:hidden}
+/* Appointment picker: selected doctor, clear fee and comfortable time choices. */
+.booking-doctor-summary{display:grid;grid-template-columns:86px 1fr auto;gap:16px;align-items:center;padding-bottom:20px;border-bottom:1px solid var(--sand-200,#ddc6b0)}
+.booking-doctor-summary img{width:86px;height:100px;object-fit:cover;object-position:center 20%;border-radius:12px;background:#fff}
+.booking-doctor-summary h2{font-family:var(--sans);font-size:1.2rem;line-height:1.3;margin:0 0 5px}
+.booking-doctor-summary p{font-size:.85rem;line-height:1.5;margin:2px 0}.booking-doctor-summary span{font-size:.8rem;color:#816952}
+.booking-fee{font:600 1.25rem var(--sans);padding:10px 12px;border-radius:12px;background:#ede0cf;color:#5c3d26;white-space:nowrap;text-align:center}.booking-fee small{display:block;font-size:.65rem;font-weight:400;margin-top:3px}
+.booking-followup{display:flex;align-items:center;gap:8px;background:#f4ecdf;border:1px solid #e2cdb7;border-radius:10px;padding:11px 13px;font-size:.85rem}.booking-followup svg{width:18px;height:18px;flex-shrink:0}
+.booking-form-card .booking-times{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:10px}.booking-form-card .booking-times button{padding:16px 8px;min-height:56px;border-radius:12px;font-weight:600;font-size:.95rem;background:#fbf7f1;border:1px solid #d9c4b0;color:#513c2c}.booking-form-card .booking-times button[aria-pressed=true]{background:#67462f;color:white;border-color:#67462f;box-shadow:0 3px 9px #67462f25}.booking-form-card .booking-times button:focus-visible{outline:2px solid #9c6644;outline-offset:3px}.booking-form-card .booking-times button:disabled{opacity:.45;cursor:not-allowed}
+.booking-selection{margin:0;padding:12px 14px;border-radius:10px;background:#f2e7d9;font-size:.9rem}.booking-submit .btn{width:100%;justify-content:center}.doctor-registration{font-size:.9rem;color:#765338}
+@media(max-width:600px){.booking-doctor-summary{grid-template-columns:66px 1fr;gap:12px}.booking-doctor-summary img{width:66px;height:85px}.booking-doctor-summary h2{font-size:1rem}.booking-fee{grid-column:1/-1;font-size:1rem;display:flex;justify-content:space-between;align-items:center}.booking-fee small{font-size:.8rem;margin:0}.booking-form-card .booking-times{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.fab{gap:8px}.fab a{width:42px;height:42px;box-shadow:0 3px 10px #0002}.fab a svg{width:19px;height:19px}.fab .facebook{background:#1877f2;color:white}.fab .instagram{background:linear-gradient(135deg,#833ab4,#e1306c,#fcb045);color:white}
