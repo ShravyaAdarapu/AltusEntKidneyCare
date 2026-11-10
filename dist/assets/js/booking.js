@@ -91,7 +91,7 @@
     event.preventDefault();if(!form.reportValidity()||loading||minute===null)return;
     submit.disabled=true; const success=document.querySelector('#formSuccess');success.classList.remove('show');
     const fields=new FormData(form),body={name:fields.get('name'),phone:fields.get('phone'),age:fields.get('age')===''?null:Number(fields.get('age')),doctor:slug(),date:selected,minute,visit:fields.get('visit'),message:fields.get('message'),website:fields.get('website')};body.request_key=key(body);
-    try {const result=await api('book',body);success.textContent='Your appointment request has been saved. Reference: '+result.reference+'. Our front desk will confirm your visit. Please call 99668 81811 if you need help.';success.classList.add('show');form.elements.message.value='';await load();}
+    try {const result=await api('book',body);success.textContent='Your appointment request has been saved. Reference: '+result.reference+'. Please call 99668 81811 if you need help.';success.classList.add('show');form.elements.message.value='';await load();}
     catch(error){await load();note.textContent=error.message;}finally{submit.disabled=loading||!ready||minute===null;}
   });
 })();
