@@ -24,6 +24,7 @@
 }
 /* Altus ENT & Kidney Care — brand palette drawn from the visiting card */
 :root {
+  color-scheme: only light;
   --brown-900: #382419;
   --brown-800: #503522;
   --brown-700: #62432f;   /* card side bar */
@@ -1833,3 +1834,8 @@ main:has(> .page-hero) > .doctor-profile-details { padding-top: 8px; }
 .video-preview{display:block;width:100%;aspect-ratio:16/9;position:relative;border:0;border-radius:12px;overflow:hidden;background:#432b20;cursor:pointer;padding:0}.video-preview img{width:100%;height:100%;object-fit:cover}.video-preview span{position:absolute;inset:0;display:grid;place-content:center;background:#241a1350;color:#fff;font:600 1rem var(--sans)}.video-preview span::before{content:'▶';display:block;margin:0 auto 12px;background:#69492f;border-radius:50%;width:64px;height:64px;line-height:64px;text-align:center;font-size:24px}.video-preview:focus-visible{outline:3px solid #b08968;outline-offset:4px}
 
 .motion-idle .care-track,.page-hidden .care-track,.page-hidden .gallery-wall-track{animation-play-state:paused}
+
+/* Keep the brand palette in browsers with automatic page darkening. */
+html{color-scheme:only light;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+/* Use the same four/three menu grouping across normal phone widths. */
+@media(max-width:640px){.editorial-header .nav{row-gap:0}.editorial-header .nav::after{content:"";flex-basis:100%;height:0;order:1}.editorial-header .nav>:nth-child(n+5){order:2}}
