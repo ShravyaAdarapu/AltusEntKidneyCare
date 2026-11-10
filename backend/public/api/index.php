@@ -315,6 +315,23 @@ try {
         }
 
         $data = input();
+        if ($action === 'admin-reception-password') {
+            if ($viewer['role']!=='doctor') fail(403,'Only doctors can reset the reception password.');
+            $current=textValue($data,'current_password',128);
+            $new=textValue($data,'new_password',128);
+            if (strlen($new)<10) fail(422,'Use at least 10 characters for the reception password.');
+            rateLimit('reception-password-'.$viewer['id'],6,900);
+            $ownHash=query('SELECT password_hash FROM staff_accounts WHERE id=?',[$viewer['id']])->fetchColumn();
+            if (!password_verify($current,$ownHash)) fail(422,'Your current doctor password is incorrect.');
+            $db->beginTransaction();
+            $reception=query("SELECT id,password_hash FROM staff_accounts WHERE role='reception' AND active=1 FOR UPDATE")->fetchAll();
+            if (count($reception)!==1) fail(409,'Contact the site owner to select the reception account.');
+            $target=$reception[0];
+            if (password_verify($new,$target['password_hash'])) fail(422,'Choose a different reception password.');
+            query('UPDATE staff_accounts SET password_hash=?,session_version=session_version+1 WHERE id=?',[password_hash($new,PASSWORD_DEFAULT),$target['id']]);
+            audit('account.reception-password',(int)$target['id']);$db->commit();
+            respond(['ok'=>true]);
+        }
         if ($action === 'admin-password') {
             if ($viewer['role'] !== 'doctor') fail(403,'Only doctors can change their password from this dashboard.');
             $old=textValue($data,'current_password',128);$new=textValue($data,'new_password',128);

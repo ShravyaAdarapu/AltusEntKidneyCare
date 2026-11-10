@@ -77,6 +77,7 @@ $('#closure').addEventListener('submit',e=>{e.preventDefault();run(async()=>{con
 function applyAccount(){
  const personal=routeDoctor;
  $('#passwordButton').hidden=viewer.role!=='doctor';
+ $('#receptionPasswordButton').hidden=viewer.role!=='doctor';
  $('#signedInName').textContent=viewer.name;
  $('#accountRole').textContent=viewer.role==='doctor'?'Doctor account':'Reception account';
  const note=$('#accessNote');note.hidden=viewer.role!=='doctor'||!sharedView();note.textContent='Shared reception view: you can view both doctors, but manage only your own appointments and schedule.';
@@ -145,6 +146,8 @@ $('#resetFilters').addEventListener('click',()=>{clearTimeout(searchTimer);$('#f
 for(const [id,delta] of [['previousDay',-1],['nextDay',1]])$('#'+id).addEventListener('click',()=>{const d=new Date($('#from').value+'T12:00:00');if(Number.isNaN(+d))return;d.setDate(d.getDate()+delta);$('#from').value=key(d);$('#to').value=key(d);page=1;run(loadList);});
 document.querySelectorAll('[data-days]').forEach(b=>b.addEventListener('click',()=>{const from=new Date(today+'T12:00:00');from.setDate(from.getDate()-Number(b.dataset.days)+1);$('#analyticsFrom').value=key(from);$('#analyticsTo').value=today;run(loadAnalytics);}));
 $('#loadAnalytics').addEventListener('click',()=>run(loadAnalytics));
+$('#receptionPasswordButton').addEventListener('click',()=>{if(viewer?.role!=='doctor')return;$('#receptionPasswordForm').reset();$('#receptionPasswordDialog').showModal();});
+$('#receptionPasswordForm').addEventListener('submit',e=>{e.preventDefault();const f=new FormData(e.target);if(f.get('new_password')!==f.get('confirm_password')){tell('New reception passwords do not match.');return;}run(async()=>{const button=e.target.querySelector('button[type="submit"],button:not([type])');button.disabled=true;try{await api('admin-reception-password',{current_password:f.get('current_password'),new_password:f.get('new_password')});e.target.reset();$('#receptionPasswordDialog').close();tell('Reception password updated. Existing reception sessions have been signed out. Share the new password securely.');}finally{button.disabled=false;}});});
 $('#passwordButton').addEventListener('click',()=>{if(viewer?.role!=='doctor')return;$('#passwordForm').reset();$('#passwordDialog').showModal();});
 $('#passwordForm').addEventListener('submit',e=>{e.preventDefault();const f=new FormData(e.target);if(f.get('new_password')!==f.get('confirm_password')){tell('New passwords do not match.');return;}run(async()=>{const r=await api('admin-password',{current_password:f.get('current_password'),new_password:f.get('new_password')});csrf=r.csrf;e.target.reset();$('#passwordDialog').close();tell('Password changed. Other sessions have been signed out.');});});
 $('#loginForm').addEventListener('submit',e=>{e.preventDefault();run(async()=>{const b=e.target.querySelector('button');b.disabled=true;try{const r=await api('login',{...Object.fromEntries(new FormData(e.target)),workspace:routeDoctor||''});csrf=r.csrf;viewer=r.user;e.target.reset();await signedIn();}finally{b.disabled=false;}});});$('#logout').addEventListener('click',()=>run(async()=>{await api('admin-logout',{});show(false);const b=await api('bootstrap');csrf=b.csrf;tell('Signed out.');}));
