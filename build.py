@@ -13,6 +13,8 @@ Tokens inside pages and partials:
 Run: python build.py  ->  writes dist/
 """
 import hashlib
+import json
+import html as html_module
 import re
 import shutil
 from pathlib import Path
@@ -164,9 +166,7 @@ LAYOUT = """<!doctype html>
 <meta property="og:description" content="{description}">
 <meta property="og:type" content="website">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400..700&family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&display=swap" rel="stylesheet">
+{performance_head}
 <link rel="stylesheet" href="assets/css/style.css?v={style_version}">
 <script type="application/ld+json">{schema}</script>
 </head>
@@ -232,7 +232,7 @@ LAYOUT = """<!doctype html>
 <a class="primary" href="book-appointment.html">{{{{icon:calendar}}}}Book</a>
 </nav>
 <script src="assets/js/main.js?v={script_version}"></script>
-<script src="assets/js/booking.js?v={booking_version}"></script>
+{booking_script}
 </body>
 </html>
 """
@@ -259,6 +259,43 @@ def clean_page_links(html):
                   html)
 
 
+def responsive_images(html, manifest):
+    image_index = 0
+    def transform(match):
+        nonlocal image_index
+        tag = match.group(0)
+        source = re.search(r'\bsrc="([^"]+)"', tag)
+        if not source:
+            return tag
+        image_index += 1
+        url = html_module.unescape(source.group(1))
+        key = Path(url.split('?')[0]).stem
+        if 'drchetanveeramaneni.com/' in url:
+            key = 'dr-chetan-profile'
+        variants = manifest.get(key)
+        if variants:
+            main = next((v for v in variants if v['width'] >= 960), variants[-1])
+            tag = tag.replace(source.group(0), 'src="'+main['path']+'"')
+            tag = re.sub(r'\s(?:width|height)="[^"]*"', '', tag)
+            attrs = ' width="'+str(main['width'])+'" height="'+str(main['height'])+'"'
+            attrs += ' srcset="'+', '.join(v['path']+' '+str(v['width'])+'w' for v in variants)+'"'
+            sizes = '(max-width: 720px) 100vw, (max-width: 1100px) 50vw, 800px'
+            if 'care-photo' in tag:
+                sizes = '(max-width: 720px) 46vw, 360px'
+            elif 'gallery-wall-track' in html[max(0, match.start()-1800):match.start()]:
+                sizes = '(max-width: 720px) 40vw, 260px'
+            elif 'loading="lazy"' in tag:
+                sizes = 'auto, '+sizes
+            attrs += ' sizes="'+sizes+'"'
+            tag = tag[:-1]+attrs+'>'
+        if 'decoding=' not in tag:
+            tag = tag[:-1]+' decoding="async">'
+        if 'loading=' not in tag:
+            tag = tag[:-1]+(' loading="eager">' if image_index == 1 else ' loading="lazy">')
+        return tag
+    return re.sub(r'<img\b[^>]*>', transform, html)
+
+
 def build():
     shutil.copytree(SRC / "assets", DIST / "assets", dirs_exist_ok=True)
     shutil.copytree(Path(__file__).parent / "backend/public", DIST, dirs_exist_ok=True)
@@ -267,14 +304,17 @@ def build():
     script_version = hashlib.sha256((SRC / "assets/js/main.js").read_bytes()).hexdigest()[:12]
     booking_version = hashlib.sha256((SRC / "assets/js/booking.js").read_bytes()).hexdigest()[:12]
     style_version = hashlib.sha256((SRC / "assets/css/style.css").read_bytes()).hexdigest()[:12]
+    manifest = json.loads((SRC / "assets/image-manifest.json").read_text(encoding="utf-8"))
     for page in sorted((SRC / "pages").glob("*.html")):
         raw = page.read_text(encoding="utf-8")
         m = re.match(r"<!--(.*?)-->\s*", raw, re.S)
         meta = dict(re.findall(r"^\s*(\w+):\s*(.+?)\s*$", m.group(1), re.M))
         body = raw[m.end():]
         html = LAYOUT.format(title=meta["title"], description=meta["description"],
-                             nav=nav_html(meta.get("nav", "")), body=body, schema=SCHEMA, script_version=script_version, style_version=style_version, booking_version=booking_version)
-        (DIST / page.name).write_text(clean_page_links(render(html)), encoding="utf-8")
+                             nav=nav_html(meta.get("nav", "")), body=body, schema=SCHEMA,
+                             performance_head=('<link rel="preload" as="font" type="font/woff2" crossorigin href="assets/fonts/dm-sans-latin.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="assets/fonts/fraunces-latin.woff2">'+('<link rel="preload" as="image" href="'+manifest["photo-1519494026892-80bbd2d6fd0d"][-1]["path"]+'">' if page.stem=="index" else "")),
+                             booking_script=('<script src="assets/js/booking.js?v='+booking_version+'" defer></script>' if page.stem in ["book-appointment","contact"] else ""), script_version=script_version, style_version=style_version, booking_version=booking_version)
+        (DIST / page.name).write_text(responsive_images(clean_page_links(render(html)), manifest), encoding="utf-8")
         print("built", page.name)
 
 

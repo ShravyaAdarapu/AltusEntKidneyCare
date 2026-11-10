@@ -1,3 +1,27 @@
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url(../fonts/dm-sans-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Fraunces';
+  font-style: italic;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url(../fonts/fraunces-italic-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Fraunces';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url(../fonts/fraunces-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 /* Altus ENT & Kidney Care — brand palette drawn from the visiting card */
 :root {
   --brown-900: #382419;
@@ -577,7 +601,7 @@ html, body { overflow-x: clip; }
   background-size: cover, max(66%, 620px) auto;
 }
 .altus-opening {
-  background-image: linear-gradient(90deg, #432b20ef, #432b20b8), url("https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1600&q=80");
+  background-image: linear-gradient(90deg, #432b20ef, #432b20b8), url("../img/photo-1519494026892-80bbd2d6fd0d-1600-4e7f77bff3.webp");
   background-position: center;
   background-size: cover;
 }
@@ -588,15 +612,15 @@ html, body { overflow-x: clip; }
   }
 }
 
-.banner-clinic { --banner-photo: url("https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1200&q=80"); }
-.banner-team { --banner-photo: url("https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=1200&q=80"); }
-.banner-ent { --banner-photo: url("https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=80"); }
-.banner-kidney { --banner-photo: url("https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1200&q=80"); }
-.banner-reading { --banner-photo: url("https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=1200&q=80"); }
-.banner-visit { --banner-photo: url("https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1200&q=80"); }
-.banner-privacy { --banner-photo: url("https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1200&q=80"); }
+.banner-clinic { --banner-photo: url("../img/photo-1519494026892-80bbd2d6fd0d-1600-4e7f77bff3.webp"); }
+.banner-team { --banner-photo: url("../img/photo-1559839734-2b71ea197ec2-1600-05f0214e00.webp"); }
+.banner-ent { --banner-photo: url("../img/photo-1576091160399-112ba8d25d1d-1600-76fe70d7c9.webp"); }
+.banner-kidney { --banner-photo: url("../img/photo-1579684385127-1ef15d508118-1600-4a593889d6.webp"); }
+.banner-reading { --banner-photo: url("../img/photo-1456513080510-7bf3a84b82f8-1600-c3705686a8.webp"); }
+.banner-visit { --banner-photo: url("../img/photo-1516549655169-df83a0774514-1600-7c91a960c4.webp"); }
+.banner-privacy { --banner-photo: url("../img/photo-1450101499163-c8848c66ca85-1600-3d6725e9b4.webp"); }
 .banner-chetan {
-  --banner-photo: url("https://drchetanveeramaneni.com/wp-content/uploads/2024/09/Dr.-Chetan-Veeramaneni.jpg");
+  --banner-photo: url("../img/dr-chetan-profile-960-fd3035f6a8.webp");
   background-position: center, right 12% top 25%;
   background-size: cover, auto 145%;
 }
@@ -627,7 +651,7 @@ html, body { overflow-x: clip; }
 
 .home-doctors {
   background: linear-gradient(#302219eb, #302219f2),
-    url("https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1600&q=80") center / cover;
+    url("../img/photo-1519494026892-80bbd2d6fd0d-1600-4e7f77bff3.webp") center / cover;
   color: #fff4e7;
 }
 .home-doctors-intro { text-align: center; }
@@ -978,7 +1002,7 @@ h1, h2, h3, h4 { font-family: var(--sans); }
 
 .section.home-feedback {
   background: linear-gradient(#372419bf, #372419df),
-    url("https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1600&q=82") center 42% / cover no-repeat #432b20;
+    url("../img/photo-1576091160399-112ba8d25d1d-1600-76fe70d7c9.webp") center 42% / cover no-repeat #432b20;
   padding-block: clamp(42px, 8vw, 104px);
   text-align: center;
   color: #fff8ef;
@@ -1042,7 +1066,7 @@ main > .about-intro { border: 0; padding-bottom: 0; }
   min-height: clamp(165px, 29vw, 360px);
   border-radius: 20px;
   background: linear-gradient(#33221873, #3322189e),
-    url("https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1600&q=82") center / cover no-repeat #503423;
+    url("../img/photo-1519494026892-80bbd2d6fd0d-1600-4e7f77bff3.webp") center / cover no-repeat #503423;
 }
 .about-photo h1 { color: #fff8ef; margin: 0; font-size: clamp(2.65rem, 9vw, 8rem); text-transform: uppercase; letter-spacing: -.04em; }
 .about-photo a { position: absolute; right: 14px; bottom: 14px; display: grid; place-items: center; width: 44px; aspect-ratio: 1; border: 1px solid currentColor; border-radius: 50%; color: #fff8ef; }
@@ -1076,16 +1100,16 @@ main > .about-intro { border: 0; padding-bottom: 0; }
   .home-photo-section .care-window { height: clamp(225px, 34vh, 312px); }
 }
 
-.photo-doctors { --page-image: url("https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=1400&q=82"); }
-.photo-gallery { --page-image: url("https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1400&q=82"); }
-.photo-ent-care { --page-image: url("https://images.unsplash.com/photo-1573497620053-ea5300f94f21?auto=format&fit=crop&w=1400&q=82"); }
-.photo-kidney-care { --page-image: url("https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1400&q=82"); }
-.photo-book-appointment { --page-image: url("https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1400&q=82"); }
-.photo-patient-info { --page-image: url("https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1400&q=82"); }
-.photo-health-library { --page-image: url("https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=1400&q=82"); }
-.photo-privacy-policy { --page-image: url("https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1400&q=82"); }
-.photo-dr-chetan-veeramaneni { --page-image: url("https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1400&q=82"); }
-.photo-dr-t-mounika { --page-image: url("https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&w=1400&q=82"); }
+.photo-doctors { --page-image: url("../img/photo-1559839734-2b71ea197ec2-1600-05f0214e00.webp"); }
+.photo-gallery { --page-image: url("../img/photo-1519494026892-80bbd2d6fd0d-1600-4e7f77bff3.webp"); }
+.photo-ent-care { --page-image: url("../img/photo-1573497620053-ea5300f94f21-1600-5b7b7d60ba.webp"); }
+.photo-kidney-care { --page-image: url("../img/photo-1579684385127-1ef15d508118-1600-4a593889d6.webp"); }
+.photo-book-appointment { --page-image: url("../img/photo-1576091160399-112ba8d25d1d-1600-76fe70d7c9.webp"); }
+.photo-patient-info { --page-image: url("../img/photo-1516549655169-df83a0774514-1600-7c91a960c4.webp"); }
+.photo-health-library { --page-image: url("../img/photo-1456513080510-7bf3a84b82f8-1600-c3705686a8.webp"); }
+.photo-privacy-policy { --page-image: url("../img/photo-1450101499163-c8848c66ca85-1600-3d6725e9b4.webp"); }
+.photo-dr-chetan-veeramaneni { --page-image: url("../img/photo-1576091160550-2173dba999ef-1600-d3ac53bb07.webp"); }
+.photo-dr-t-mounika { --page-image: url("../img/photo-1538108149393-fbbd81895907-1600-c62e855aec.webp"); }
 
 .about-photo h1 { font-size: clamp(2.6rem, 6vw, 5.8rem); }
 main > .page-hero:has(.inner-photo-banner) { background: var(--ivory-50); padding-block: clamp(10px, 1.4vw, 20px) 0; border: 0; }
@@ -1240,7 +1264,7 @@ main > .page-hero:has(.inner-photo-banner) { background: var(--ivory-50); paddin
 }
 
 
-.photo-contact { --page-image: url("https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1400&q=82"); }
+.photo-contact { --page-image: url("../img/photo-1516549655169-df83a0774514-1600-7c91a960c4.webp"); }
 main > .about-intro { padding-top: clamp(10px, 1.4vw, 20px); }
 .about-intro > .wrap { width: min(96vw, 1660px); }
 .about-photo { min-height: clamp(145px, 20vw, 275px); }
@@ -1721,7 +1745,7 @@ main > .about-three-intro { padding-block: clamp(22px, 3vw, 42px); border: 0; ba
   .about-three-portraits { justify-self: start; width: min(100%, 340px); }
 }
 
-.photo-about-us { --page-image: url("https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1400&q=82"); }
+.photo-about-us { --page-image: url("../img/photo-1516549655169-df83a0774514-1600-7c91a960c4.webp"); }
 .about-three-specialists article { display: flow-root; }
 .about-meet-portrait { float: left; width: clamp(76px, 10vw, 112px); height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: center top; border-radius: 9px; margin: 0 14px 8px 0; background: #faf5ef; }
 .about-three-specialists .about-three-qualification { min-height: 2.4em; }
@@ -1805,3 +1829,7 @@ main:has(> .page-hero) > .doctor-profile-details { padding-top: 8px; }
 
 /* Increase the gallery as one balanced unit, including the featured photograph. */
 @media(min-width:721px){.gallery-category-grid:has(.gallery-shot[aria-pressed="true"]){--gallery-thumb-height:clamp(100px,16vh,155px)}}
+
+.video-preview{display:block;width:100%;aspect-ratio:16/9;position:relative;border:0;border-radius:12px;overflow:hidden;background:#432b20;cursor:pointer;padding:0}.video-preview img{width:100%;height:100%;object-fit:cover}.video-preview span{position:absolute;inset:0;display:grid;place-content:center;background:#241a1350;color:#fff;font:600 1rem var(--sans)}.video-preview span::before{content:'▶';display:block;margin:0 auto 12px;background:#69492f;border-radius:50%;width:64px;height:64px;line-height:64px;text-align:center;font-size:24px}.video-preview:focus-visible{outline:3px solid #b08968;outline-offset:4px}
+
+.motion-idle .care-track,.page-hidden .care-track,.page-hidden .gallery-wall-track{animation-play-state:paused}

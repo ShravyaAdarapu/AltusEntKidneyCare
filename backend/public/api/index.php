@@ -384,7 +384,7 @@ try {
             $summaryParams = [$from,$to]; $summaryWhere = 'a.visit_date BETWEEN ? AND ?';
             if ($slug !== '') {$summaryWhere .= ' AND d.slug = ?'; $summaryParams[] = $slug;}
             $summary = query('SELECT a.status,COUNT(*) AS total FROM appointments a JOIN doctors d ON d.id=a.doctor_id WHERE '.$summaryWhere.' GROUP BY a.status', $summaryParams)->fetchAll();
-            respond(['appointments'=>$rows,'total'=>$total,'page'=>$page,'summary'=>$summary]);
+            respond(['appointments'=>$rows,'total'=>$total,'page'=>$page,'summary'=>$summary,'enquiries_unresolved'=>$viewer['role']==='reception'?(int)query('SELECT COUNT(*) FROM enquiries WHERE is_resolved=0')->fetchColumn():null]);
         }
         if ($action === 'admin-history') {
             $name = textValue($data, 'name', 100); $phone = phoneValue($data);

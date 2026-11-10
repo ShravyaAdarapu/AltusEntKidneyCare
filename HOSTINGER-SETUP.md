@@ -63,3 +63,11 @@ Run `backend/bin/test-permissions.py` only with the isolated test PHP server on 
 
 ### Doctor workspace sign-in
 Doctor pages require the matching doctor account. Reception credentials cannot sign in on a doctor page; reception continues to manage both doctors through `/admin/reception`. Doctors may open the shared reception workspace to view both doctors, while editing only their own bookings and schedules. Session checks finish before the login form is shown to prevent a login-screen flash. No database migration is required for this change.
+
+
+### Performance and cache boundaries
+Public photos use committed, responsive WebP variants listed in `src/assets/image-manifest.json`; original recognition PNGs remain available for full-photo viewing. Fonts and existing stock photos are hosted locally. `scripts/optimize_images.py` is an optional asset preparation tool using Pillow; deploy builds do not require it. `scripts/check_public_build.py` checks local references and page-specific booking scripts during CI.
+
+Only public assets receive browser caching in `src/assets/.htaccess`. Content-hashed WebP files can be cached for a year; other public assets use one week. Staff pages and booking/availability API responses retain no-store behavior. CSS and JavaScript use versioned URLs. YouTube players load only after Play; the clinic map remains lazy-loaded. Doctor analytics initialization requests analytics without also fetching the full appointment list and schedule editor. Reception still receives its unresolved-enquiry badge in the appointments response, restricted by role.
+
+Security checks cover prepared queries, doctor permissions, CSRF, input validation, password hashing/session revocation and private config separation. These checks are not a penetration-test certification. Hostinger automated database backups and an actual restore drill must still be confirmed in hPanel; Git is not a patient-database backup. High-volume load testing has not been performed.

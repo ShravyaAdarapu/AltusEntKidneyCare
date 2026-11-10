@@ -138,3 +138,13 @@
  const dialog=document.getElementById('clinicPhotoDialog');
  if(dialog){const image=dialog.querySelector('img');document.querySelectorAll('[data-photo]').forEach(button=>button.addEventListener('click',()=>{image.src=button.dataset.photo;image.alt=button.querySelector('img').alt;dialog.showModal();}));dialog.querySelector('button').addEventListener('click',()=>dialog.close());dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});dialog.addEventListener('close',()=>{image.removeAttribute('src');});}
 }
+
+// No third-party player or its JavaScript is requested before Play.
+document.querySelectorAll('[data-youtube]').forEach(button=>button.addEventListener('click',()=>{
+ const id=button.dataset.youtube;if(!/^[a-zA-Z0-9_-]{11}$/.test(id))return;
+ const frame=document.createElement('iframe');frame.src='https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1';frame.title=button.getAttribute('aria-label');frame.allow='autoplay; encrypted-media; picture-in-picture';frame.allowFullscreen=true;button.replaceWith(frame);frame.focus();
+}));
+
+// Keep motion continuous on screen while avoiding work in hidden sections/tabs.
+if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>entries.forEach(entry=>entry.target.classList.toggle('motion-idle',!entry.isIntersecting)));document.querySelectorAll('.care-columns').forEach(section=>observer.observe(section));}
+document.addEventListener('visibilitychange',()=>document.documentElement.classList.toggle('page-hidden',document.hidden));

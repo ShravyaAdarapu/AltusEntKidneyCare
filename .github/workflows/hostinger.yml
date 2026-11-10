@@ -26,6 +26,7 @@ jobs:
         run: |
           rm -rf dist
           python build.py
+          python scripts/check_public_build.py
       - name: Check browser JavaScript and PHP
         run: |
           node --check dist/assets/js/main.js

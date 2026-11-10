@@ -32,7 +32,7 @@
   const dateInput=form.elements.date, doctor=form.elements.doctor, timeInput=form.elements.slot, submit=form.querySelector('[type=submit]');
   const slug=()=>doctor.selectedIndex===1?'mounika':'chetan';
   const doctorDetails={
-    chetan:{name:'Dr. Chetan Veeramaneni',specialty:'Nephrologist & Renal Transplant Physician',registration:'93478',photo:'https://drchetanveeramaneni.com/wp-content/uploads/2024/09/Dr.-Chetan-Veeramaneni.jpg'},
+    chetan:{name:'Dr. Chetan Veeramaneni',specialty:'Nephrologist & Renal Transplant Physician',registration:'93478',photo:'assets/img/dr-chetan-profile-960-fd3035f6a8.webp'},
     mounika:{name:'Dr. T. Mounika Rao',specialty:'ENT, Head & Neck Surgeon',registration:'89681',photo:'assets/img/dr-mounika.jpg'}
   };
   function updateDoctor(){
