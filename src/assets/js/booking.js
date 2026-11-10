@@ -13,17 +13,18 @@
     return data;
   }
   function status(parent) { const p=document.createElement('p'); p.setAttribute('role','status'); p.className='form-note full'; parent.append(p); return p; }
-  let boot = api('bootstrap').then(data => {csrf=data.csrf; return data;});
+  async function bootstrap(){const data=await api('bootstrap');csrf=data.csrf;return data;}
+  let boot = bootstrap();
   // Handle unavailable hosting without an unhandled rejection before submit.
   boot.catch(() => {});
   function keyFor() { let previous='', key=''; return body => {const next=JSON.stringify(body); if(next!==previous){previous=next;key=crypto.randomUUID();} return key;}; }
   if (contact) {
-    const note=status(contact), key=keyFor();
+    const note=status(contact);let key=keyFor(),sending=false;
     contact.addEventListener('submit',async event => {
-      event.preventDefault(); if(!contact.reportValidity()) return;
-      const button=contact.querySelector('[type=submit]'); button.disabled=true;
-      try {await boot; const body=Object.fromEntries(new FormData(contact)); body.request_key=key(body); const result=await api('contact',body); note.textContent='Thank you. Your enquiry has been saved. Reference: '+result.reference+'. Our front desk will get in touch.'; contact.reset();}
-      catch(error){note.textContent=error.message;} finally{button.disabled=false;}
+      event.preventDefault(); if(sending||!contact.reportValidity()) return;
+      const button=contact.querySelector('[type=submit]');sending=true;button.disabled=true;note.textContent='Sending your enquiry…';
+      try {await bootstrap(); const body=Object.fromEntries(new FormData(contact)); body.request_key=key(body); const result=await api('contact',body); note.textContent='Thank you. Your enquiry has been saved. Reference: '+result.reference+'. Our front desk will get in touch.'; contact.reset();key=keyFor();}
+      catch(error){note.textContent=error.message;} finally{sending=false;button.disabled=false;}
     });
   }
   if(!form) return;
