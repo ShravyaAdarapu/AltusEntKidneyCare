@@ -65,7 +65,8 @@ assert call(public,'book',b,pboot['csrf'])[0]==201
 assert call(public,'admin-list',f,pboot['csrf'])[0]==401
 # Password change revokes old sessions; restore only the disposable test password.
 oldsession,oldtoken,_=login('testmounika','Altus-doctor-test-only!')
-code,changed=call(mounika,'admin-password',dict(current_password='Altus-doctor-test-only!',new_password='Altus-test-changed-only!'),mt);assert code==200,(code,changed)
+assert call(mounika,'admin-password',dict(current_password='Altus-doctor-test-only!',new_password='Nine1234!'),mt)[0]==422
+code,changed=call(mounika,'admin-password',dict(current_password='Altus-doctor-test-only!',new_password='Altus10!xx'),mt);assert code==200,(code,changed)
 assert call(oldsession,'admin-list',f,oldtoken)[0]==401
-assert call(mounika,'admin-password',dict(current_password='Altus-test-changed-only!',new_password='Altus-doctor-test-only!'),changed['csrf'])[0]==200
+assert call(mounika,'admin-password',dict(current_password='Altus10!xx',new_password='Altus-doctor-test-only!'),changed['csrf'])[0]==200
 print('PASS: doctor isolation, shared read-only access, cross-doctor edit/create/reschedule/schedule denial, own schedule permissions, scoped histories/analytics, receptionist access, validated IDs, CSRF, anonymous booking, and password/session revocation. Isolated database only.')
