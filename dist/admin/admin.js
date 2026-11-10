@@ -20,6 +20,7 @@ function selectView(next){
  view=next;
  for(const v of ['appointments','availability','enquiries','analytics'])$('#'+v+'View').hidden=v!==next;
  $('#summary').hidden=next!=='appointments';
+ $('#updated').textContent=next==='enquiries'?'Contact form messages · Managed by reception · Times in IST':next==='availability'?'Manage weekly consultation hours and leave dates.':'All times shown in India time.';
  $('#pageTitle').textContent={appointments:'Appointments',availability:'Doctors & availability',enquiries:'Patient enquiries',analytics:'Analytics'}[next];
  document.querySelectorAll('nav button').forEach(b=>{const status=$('#statusFilter').value;const active=next==='appointments'?(status?b.dataset.status===status:b.dataset.view==='appointments'):b.dataset.view===next;b.setAttribute('aria-current',active?'page':'false');});
 }
@@ -28,12 +29,32 @@ function phone(parent,value){const a=el('a',value,parent);a.href='tel:'+value.re
 const statusLabel={requested:'Pending',confirmed:'Confirmed',completed:'Completed',cancelled:'Cancelled'};
 function filters(){return {from:$('#from').value,to:$('#to').value,doctor:$('#doctorFilter').value,status:$('#statusFilter').value,search:$('#search').value.trim(),page,shared:sharedView()};}
 async function loadList(){if(!$('#filters').reportValidity())return;syncDoctorChips();const seq=++listSequence;const d=await api('admin-list',filters());if(seq!==listSequence)return;currentRows=d.appointments;total=d.total;const body=$('#appointments');body.replaceChildren();$('#empty').hidden=!!currentRows.length;
-for(const a of currentRows){const tr=el('tr',undefined,body);const date=el('td',undefined,tr);el('strong',time(Number(a.start_minute)),date);el('small',a.visit_date,date);const patient=el('td',undefined,tr);patient.className='patient-cell';el('strong',a.patient_name,patient);el('br',undefined,patient);phone(patient,a.phone);el('small',a.reference+(a.age!==null?' · Age '+a.age:''),patient);el('td',a.doctor,tr);const concern=el('td',a.visit_type,tr);concern.className='concern-cell';el('p',a.concern||'—',concern);const state=el('td',undefined,tr);el('span',statusLabel[a.status],state).className='status '+a.status;const controls=el('td',undefined,tr);controls.className='row-actions';
+for(const a of currentRows){const tr=el('tr',undefined,body);const date=el('td',undefined,tr);el('strong',time(Number(a.start_minute)),date);el('small',a.visit_date,date);const patient=el('td',undefined,tr);patient.className='patient-cell';el('strong',a.patient_name,patient);if(Number(a.is_test)){tr.classList.add('test-row');el('span','Test booking · excluded from analytics',patient).className='test-label';}el('br',undefined,patient);phone(patient,a.phone);el('small',a.reference+(a.age!==null?' · Age '+a.age:''),patient);el('td',a.doctor,tr);const concern=el('td',a.visit_type,tr);concern.className='concern-cell';el('p',a.concern||'—',concern);const state=el('td',undefined,tr);el('span',statusLabel[a.status],state).className='status '+a.status;const controls=el('td',undefined,tr);controls.className='row-actions';
  action(controls,'Visit history',()=>history(a));if(canManage(a.doctor_slug)&&a.status==='requested')action(controls,'Confirm',()=>change(a,'confirmed'));if(canManage(a.doctor_slug)&&a.status==='confirmed')action(controls,'Complete',()=>change(a,'completed'));if(canManage(a.doctor_slug)&&['requested','confirmed'].includes(a.status)){action(controls,'Reschedule',()=>openBooking(a));action(controls,'Cancel',()=>{$('#cancelText').textContent=a.patient_name+' · '+a.doctor+' · '+a.visit_date+' '+time(Number(a.start_minute));$('#cancelDialog').dataset.id=a.id;$('#cancelDialog').showModal();});}}
-const counts=Object.fromEntries(d.summary.map(x=>[x.status,Number(x.total)]));const summary=$('#summary');summary.replaceChildren();for(const [status,label] of Object.entries(statusLabel)){const card=el('div',undefined,summary);card.className='stat';el('span',label,card);el('strong',String(counts[status]||0),card);}$('#pendingBadge').textContent=counts.requested?'('+counts.requested+')':'';$('#listCaption').textContent=`${$('#from').value} to ${$('#to').value} · ${$('#doctorFilter').selectedOptions[0].textContent}`;$('#pageInfo').textContent=`${total?((page-1)*25+1):0}–${Math.min(page*25,total)} of ${total}`;$('#prev').disabled=page<=1;$('#next').disabled=page*25>=total;$('#updated').textContent='Updated '+new Date().toLocaleTimeString('en-IN',{timeZone:'Asia/Kolkata',hour:'numeric',minute:'2-digit'})+' IST · Totals cover the selected date range.';}
+const counts=Object.fromEntries(d.summary.map(x=>[x.status,Number(x.total)]));const summary=$('#summary');summary.replaceChildren();for(const [status,label] of Object.entries(statusLabel)){const card=el('div',undefined,summary);card.className='stat';el('span',label,card);el('strong',String(counts[status]||0),card);}$('#pendingBadge').textContent=counts.requested?'('+counts.requested+')':'';$('#listCaption').textContent=`${$('#from').value} to ${$('#to').value} · ${$('#doctorFilter').selectedOptions[0].textContent}`;$('#pageInfo').textContent=`${total?((page-1)*25+1):0}–${Math.min(page*25,total)} of ${total}`;$('#prev').disabled=page<=1;$('#next').disabled=page*25>=total;if(view==='appointments')$('#updated').textContent='Updated '+new Date().toLocaleTimeString('en-IN',{timeZone:'Asia/Kolkata',hour:'numeric',minute:'2-digit'})+' IST · Status totals exclude test bookings. The list retains test records with a label.';}
 async function change(a,status){await api('admin-status',{id:Number(a.id),status});await loadList();tell('Appointment '+status+'.');}
 async function history(a){$('#historyTitle').textContent=a.patient_name+' · Visit history';$('#history').textContent='Loading…';$('#historyDialog').showModal();const d=await api('admin-history',{name:a.patient_name,phone:a.phone,shared:sharedView()});$('#history').replaceChildren();if(!d.visits.length)el('p','No recorded visits.',$('#history'));for(const v of d.visits){const c=el('article',undefined,$('#history'));el('h3',v.visit_date+' · '+time(Number(v.start_minute))+' · '+statusLabel[v.status],c);el('p',v.doctor+' · '+v.visit_type+' · '+v.reference,c);el('p',v.concern||'No concern recorded.',c);}}
-function renderEnquiries(){const root=$('#enquiries');root.replaceChildren();const rows=enquiries.filter(e=>!$('#unresolved').checked||!Number(e.is_resolved));if(!rows.length)el('p','No matching enquiries.',root);for(const e of rows){const c=el('article',undefined,root);el('h3',e.patient_name+' · '+e.reference,c);phone(c,e.phone);el('small',(Number(e.is_resolved)?'Resolved':'New')+' · '+e.created_at+' IST',c);el('p',e.message,c);action(c,'Create appointment',()=>openBooking(null,e));action(c,Number(e.is_resolved)?'Reopen':'Mark resolved',async()=>{await api('admin-enquiry',{id:Number(e.id),resolved:!Number(e.is_resolved)});await loadOffice();tell('Enquiry updated.');});}}
+function renderEnquiries(){
+ const root=$('#enquiries');root.replaceChildren();
+ const unresolved=enquiries.filter(e=>!Number(e.is_resolved)).length;
+ $('#enquiryCounts').textContent=`${unresolved} unresolved · ${enquiries.length-unresolved} resolved · ${enquiries.length} loaded`;
+ const rows=enquiries.filter(e=>!$('#unresolved').checked||!Number(e.is_resolved));
+ if(view==='enquiries')$('#updated').textContent='Contact form messages · Managed by reception · Times in IST';
+ if(!rows.length){const empty=el('p','No enquiries to show with this filter.',root);empty.className='enquiry-empty';}
+ for(const e of rows){
+  const resolved=Boolean(Number(e.is_resolved)),c=el('article',undefined,root);c.className='enquiry-card';
+  const head=el('div',undefined,c);head.className='enquiry-heading';
+  const person=el('div',undefined,head);el('h3',e.patient_name,person);el('small',e.reference,person);
+  el('span',resolved?'Resolved':'Needs response',head).className='enquiry-status'+(resolved?' resolved':'');
+  const details=el('div',undefined,c);details.className='enquiry-details';
+  const contact=el('div',undefined,details);el('span','PHONE',contact);phone(contact,e.phone);
+  const received=el('div',undefined,details);el('span','RECEIVED · IST',received);el('strong',e.created_at,received);
+  const message=el('div',undefined,c);message.className='enquiry-message';el('span','PATIENT MESSAGE',message);el('p',e.message,message);
+  const controls=el('div',undefined,c);controls.className='enquiry-actions';
+  action(controls,'Create appointment',()=>openBooking(null,e));
+  const resolve=action(controls,resolved?'Reopen':'Mark resolved',async()=>{await api('admin-enquiry',{id:Number(e.id),resolved:!resolved});await loadOffice();tell('Enquiry updated.');});resolve.classList.add('secondary');
+ }
+}
 function minuteValue(value){const [h,m]=value.split(':').map(Number);return h*60+m;}
 function inputTime(value){return String(Math.floor(value/60)).padStart(2,'0')+':'+String(value%60).padStart(2,'0');}
 function renderDoctorOverview(){
@@ -64,7 +85,7 @@ function applyAccount(){
  const links=$('#workspaceLinks');links.replaceChildren();
  for(const [slug,label] of [['reception','Reception'],['dr.chetan','Dr. Chetan'],['dr.mounika','Dr. Mounika']]){
   if(viewer.role==='doctor'&&slug!=='reception'&&slug!=='dr.'+viewer.doctor)continue;
-  const a=el('a',label,links);a.href='/admin/'+slug;if(location.pathname==='/admin/'+slug)a.setAttribute('aria-current','page');
+  const a=el('a',undefined,links);a.append(iconNode(slug==='reception'?'users':slug==='dr.chetan'?'kidney':'ear'));el('span',label,a);a.href='/admin/'+slug;a.addEventListener('click',event=>{if(event.ctrlKey||event.metaKey||event.shiftKey||event.altKey||event.button!==0||a.getAttribute('aria-current')==='page')return;if(!document.startViewTransition||matchMedia('(prefers-reduced-motion: reduce)').matches)return;event.preventDefault();document.body.classList.add('workspace-leaving');document.querySelector('main').setAttribute('aria-busy','true');setTimeout(()=>location.assign(a.href),140);});if(location.pathname==='/admin/'+slug)a.setAttribute('aria-current','page');
  }
  for(const select of [$('#doctorFilter'),$('#analyticsDoctor')]){
   select.replaceChildren(new Option('Both doctors',''));for(const d of doctors)select.append(new Option(d.name,d.slug));
@@ -86,12 +107,13 @@ async function loadAnalytics(){
  const from=$('#analyticsFrom').value,to=$('#analyticsTo').value;if(!from||!to){tell('Choose a date range.');return;}
  const d=await api('admin-analytics',{from,to,doctor:$('#analyticsDoctor').value,shared:sharedView()});
  const counts=Object.fromEntries(d.status.map(s=>[s.status,Number(s.total)]));const total=Object.values(counts).reduce((a,b)=>a+b,0);
- const root=$('#analyticsStats');root.replaceChildren();for(const [label,value] of [['Appointments',total],['Pending',counts.requested||0],['Completed',counts.completed||0],['Patients (name + phone)',d.patients]]){const c=el('div',undefined,root);c.className='stat';el('span',label,c);el('strong',String(value),c);}
+ const root=$('#analyticsStats');root.replaceChildren();for(const [label,value] of [['Non-test bookings (incl. cancelled)',total],['Pending',counts.requested||0],['Completed',counts.completed||0],['Patients with non-cancelled bookings',d.patients]]){const c=el('div',undefined,root);c.className='stat';el('span',label,c);el('strong',String(value),c);}
+ $('#analyticsExclusions').textContent=`${d.excluded_tests||0} test booking(s) excluded. Cancelled bookings remain visible in the status breakdown; completed means marked completed by staff.`;
  const daily=$('#dailyChart');daily.replaceChildren();if(!d.daily.length)el('p','No appointment activity in this date range.',daily);
  const peak=Math.max(1,...d.daily.map(x=>Number(x.total)));
  for(const day of d.daily){const row=el('div',undefined,daily);row.className='chart-row';el('span',day.visit_date,row);const meter=el('meter',undefined,row);meter.min=0;meter.max=peak;meter.value=Number(day.total);meter.setAttribute('aria-label',day.visit_date+' appointments: '+day.total);el('strong',String(day.total),row);}
  for(const [selector,rows,labelKey] of [['#doctorAnalytics',d.doctors,'name'],['#visitAnalytics',d.visit_types,'visit_type'],['#statusAnalytics',d.status,'status']]){const node=$(selector);node.replaceChildren();if(!rows.length)el('p','No appointments recorded.',node);for(const row of rows){const line=el('p',undefined,node);line.className='breakdown';el('span',labelKey==='status'?statusLabel[row.status]:row[labelKey],line);el('strong',String(row.total),line);}}
- $('#updated').textContent='Analytics: '+from+' to '+to+' · '+$('#analyticsDoctor').selectedOptions[0].textContent+' · India time';
+ if(view==='analytics')$('#updated').textContent='Analytics: '+from+' to '+to+' · '+$('#analyticsDoctor').selectedOptions[0].textContent+' · India time';
 }
 function syncDoctorChips(){
  const root=$('#doctorChips');root.replaceChildren();

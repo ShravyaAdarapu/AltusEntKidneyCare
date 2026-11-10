@@ -10,6 +10,11 @@ header('X-Frame-Options: DENY');
 header('Permissions-Policy: camera=(), microphone=(), geolocation=()');
 header("Content-Security-Policy: default-src 'none'; frame-ancestors 'none'");
 
+// Explicit legacy test records only; never infer test data from a patient's name.
+function testAppointmentSql(): string {
+    return "(a.reference IN ('ALT-C318CB44717E','ALT-FE21A248309E') OR (a.patient_name='DEPLOYMENT TEST - please ignore' AND a.concern='Synthetic deployment check. Will be cancelled immediately.'))";
+}
+
 function fail(int $status, string $message): never {
     global $db;
     if (isset($db) && $db->inTransaction()) $db->rollBack();
@@ -304,7 +309,7 @@ try {
             dateValue($date);
             $doctorFilter = $viewer['role']==='doctor' ? ' AND d.id='.(int)$viewer['doctor_id'] : '';
             respond([
-                'appointments'=>query('SELECT a.id,a.reference,a.visit_date,a.start_minute,a.patient_name,a.phone,a.age,a.visit_type,a.concern,a.status,d.name AS doctor FROM appointments a JOIN doctors d ON d.id=a.doctor_id WHERE a.visit_date=?'.$doctorFilter.' ORDER BY a.start_minute,a.id',[$date])->fetchAll(),
+                'appointments'=>query('SELECT '.testAppointmentSql().' AS is_test,a.id,a.reference,a.visit_date,a.start_minute,a.patient_name,a.phone,a.age,a.visit_type,a.concern,a.status,d.name AS doctor FROM appointments a JOIN doctors d ON d.id=a.doctor_id WHERE a.visit_date=?'.$doctorFilter.' ORDER BY a.start_minute,a.id',[$date])->fetchAll(),
                 'enquiries'=>$viewer['role']==='reception' ? query('SELECT id,reference,patient_name,phone,message,is_resolved,created_at FROM enquiries ORDER BY id DESC LIMIT 100')->fetchAll() : [],
                 'hours'=>query('SELECT d.slug,h.weekday,h.is_open,h.start_minute,h.end_minute FROM weekly_hours h JOIN doctors d ON d.id=h.doctor_id WHERE 1=1'.$doctorFilter.' ORDER BY d.id,h.weekday')->fetchAll(),
                 'closures'=>query('SELECT d.slug,c.closed_date FROM closed_dates c JOIN doctors d ON d.id=c.doctor_id WHERE c.closed_date>=CURRENT_DATE'.$doctorFilter.' ORDER BY c.closed_date')->fetchAll(),
@@ -332,12 +337,14 @@ try {
             $slug=scopeDoctor($data);$where='a.visit_date BETWEEN ? AND ?';$params=[$from,$to];
             if ($slug!=='') {$where.=' AND d.slug=?';$params[]=$slug;}
             $join=' FROM appointments a JOIN doctors d ON d.id=a.doctor_id WHERE '.$where;
+            $testCount=(int)query('SELECT COUNT(*)'.$join.' AND '.testAppointmentSql(),$params)->fetchColumn();
+            $join.=' AND NOT '.testAppointmentSql();
             $daily=query("SELECT a.visit_date,COUNT(*) AS total,SUM(a.status='completed') AS completed,SUM(a.status='cancelled') AS cancelled".$join.' GROUP BY a.visit_date ORDER BY a.visit_date',$params)->fetchAll();
             $status=query('SELECT a.status,COUNT(*) AS total'.$join.' GROUP BY a.status',$params)->fetchAll();
             $byDoctor=query("SELECT d.name,d.slug,COUNT(*) AS total,SUM(a.status='completed') AS completed".$join.' GROUP BY d.id,d.name,d.slug',$params)->fetchAll();
             $types=query('SELECT a.visit_type,COUNT(*) AS total'.$join.' GROUP BY a.visit_type',$params)->fetchAll();
             $patients=(int)query("SELECT COUNT(*) FROM (SELECT a.patient_name,a.phone".$join." AND a.status<>'cancelled' GROUP BY a.patient_name,a.phone) patient_groups",$params)->fetchColumn();
-            respond(['daily'=>$daily,'status'=>$status,'doctors'=>$byDoctor,'visit_types'=>$types,'patients'=>$patients]);
+            respond(['daily'=>$daily,'status'=>$status,'doctors'=>$byDoctor,'visit_types'=>$types,'patients'=>$patients,'excluded_tests'=>$testCount]);
         }
         if ($action === 'admin-list') {
             $from = textValue($data, 'from', 10);
@@ -360,10 +367,10 @@ try {
             $clause = implode(' AND ', $where);
             $page = $data['page'] ?? 1; if (!is_int($page) || $page<1 || $page>100000) fail(422,'Choose a valid page.'); $offset = ($page - 1) * 25;
             $total = (int)query('SELECT COUNT(*) FROM appointments a JOIN doctors d ON d.id=a.doctor_id WHERE '.$clause, $params)->fetchColumn();
-            $rows = query('SELECT a.id,a.reference,a.visit_date,a.start_minute,a.patient_name,a.phone,a.age,a.visit_type,a.concern,a.status,d.slug AS doctor_slug,d.name AS doctor FROM appointments a JOIN doctors d ON d.id=a.doctor_id WHERE '.$clause.' ORDER BY a.visit_date,a.start_minute,a.id LIMIT 25 OFFSET '.$offset, $params)->fetchAll();
+            $rows = query('SELECT '.testAppointmentSql().' AS is_test,a.id,a.reference,a.visit_date,a.start_minute,a.patient_name,a.phone,a.age,a.visit_type,a.concern,a.status,d.slug AS doctor_slug,d.name AS doctor FROM appointments a JOIN doctors d ON d.id=a.doctor_id WHERE '.$clause.' ORDER BY a.visit_date,a.start_minute,a.id LIMIT 25 OFFSET '.$offset, $params)->fetchAll();
             $summaryParams = [$from,$to]; $summaryWhere = 'a.visit_date BETWEEN ? AND ?';
             if ($slug !== '') {$summaryWhere .= ' AND d.slug = ?'; $summaryParams[] = $slug;}
-            $summary = query('SELECT a.status,COUNT(*) AS total FROM appointments a JOIN doctors d ON d.id=a.doctor_id WHERE '.$summaryWhere.' GROUP BY a.status', $summaryParams)->fetchAll();
+            $summary = query('SELECT a.status,COUNT(*) AS total FROM appointments a JOIN doctors d ON d.id=a.doctor_id WHERE '.$summaryWhere.' AND NOT '.testAppointmentSql().' GROUP BY a.status', $summaryParams)->fetchAll();
             respond(['appointments'=>$rows,'total'=>$total,'page'=>$page,'summary'=>$summary]);
         }
         if ($action === 'admin-history') {
