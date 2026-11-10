@@ -128,9 +128,6 @@ function renderActivityGraph(root,days){
  const step=Math.max(1,Math.ceil(days.length/7));days.forEach((d,i)=>{const dot=node('circle',{cx:x(i),cy:y(d.count),r:days.length<40?4:2,fill:'#855d3c'});const title=document.createElementNS(ns,'title');title.textContent=d.date+': '+d.count+' bookings';dot.append(title);if(i%step===0||i===days.length-1)node('text',{x:x(i),y:238,'text-anchor':'middle',fill:'#80776d','font-size':11},d.date.slice(5));});
  root.append(svg);const list=el('details',undefined,root);el('summary','View daily numbers',list);for(const day of days){const row=el('p',day.date+' — '+day.count+' bookings',list);row.className='daily-number';}
 }
-$('#analyticsToday').addEventListener('click',()=>{ $('#from').value=today;$('#to').value=today;$('#statusFilter').value='';page=1;selectView('appointments');run(loadList);});
-$('#analyticsPending').addEventListener('click',()=>{ $('#from').value=today;$('#to').value=maxDate;$('#statusFilter').value='requested';page=1;selectView('appointments');run(loadList);});
-$('#analyticsSchedule').addEventListener('click',()=>{selectView('availability');run(loadOffice);});
 function syncDoctorChips(){
  const root=$('#doctorChips');root.replaceChildren();
  for(const option of [...$('#doctorFilter').options]){
