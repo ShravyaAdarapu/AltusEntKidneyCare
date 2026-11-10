@@ -1794,3 +1794,11 @@ main:has(> .page-hero) > .doctor-profile-details { padding-top: 8px; }
 .about-founder-names{display:block}.about-founder-names .doctor-full-name{white-space:nowrap}
 @media(min-width:800px){.about-founder-names{white-space:nowrap}}
 @media(max-width:480px){.home-founder-section .hero-founders .home-doctor .home-doctor-visual:not(.home-doctor-monogram){aspect-ratio:4/3}.home-founder-section .hero-founders .home-doctor-details{padding:8px}}
+
+.about-three-book .btn-primary{background-image:linear-gradient(110deg,#9c6644 0%,#69472e 48%,#523725 52%,#523725 100%);background-size:220% 100%;background-position:100% 50%;transition:background-position .35s ease,transform .2s ease,box-shadow .2s ease}
+.about-three-book .btn-primary:is(:hover,:focus-visible){background-position:0 50%;transform:translateY(-2px);box-shadow:0 7px 16px #5c3d2626;color:#fff}
+.about-three-call{padding:10px 12px;border:1px solid transparent;border-radius:999px;transition:background .2s ease,border-color .2s ease,transform .2s ease,color .2s ease}
+.about-three-call:is(:hover,:focus-visible){background:#ead9c4;border-color:#c5a383;color:#5b3922;transform:translateY(-2px)}
+.about-three-call svg{transition:transform .2s ease}.about-three-call:hover svg{transform:rotate(-8deg)}
+.about-three-book .btn-row a:focus-visible{outline:2px solid #9c6644;outline-offset:4px}
+@media(prefers-reduced-motion:reduce){.about-three-book .btn-primary,.about-three-call,.about-three-call svg{transition:none}.about-three-book .btn-primary:is(:hover,:focus-visible),.about-three-call:is(:hover,:focus-visible),.about-three-call:hover svg{transform:none}}

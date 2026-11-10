@@ -30,6 +30,7 @@ SITE = {
     "instagram": "https://www.instagram.com/altusentandkidneycare/",
     "facebook": "https://www.facebook.com/AltusENTandKidenycare/",
     "youtube": "https://www.youtube.com/@AltusENTKidneycare",
+    "chetan_facebook": "https://www.facebook.com/share/1CEiRGpVuR/?mibextid=wwXIfr",
     "mounika_instagram": "https://www.instagram.com/drtmounika.entsurgeon/",
     "mounika_facebook": "https://www.facebook.com/Dr.T.Mounika",
     "addr1": "3rd Floor, AV Complex, Beside Aparna One",
