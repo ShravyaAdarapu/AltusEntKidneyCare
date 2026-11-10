@@ -85,7 +85,6 @@ function applyAccount(){
  $('#workspaceLabel').textContent=personal?(personal==='chetan'?'Dr. Chetan':'Dr. Mounika'):'Reception desk';
  const links=$('#workspaceLinks');links.replaceChildren();
  for(const [slug,label] of [['reception','Reception'],['dr.chetan','Dr. Chetan'],['dr.mounika','Dr. Mounika']]){
-  if(viewer.role==='doctor'&&slug!=='reception'&&slug!=='dr.'+viewer.doctor)continue;
   const a=el('a',undefined,links);a.append(iconNode(slug==='reception'?'users':slug==='dr.chetan'?'kidney':'ear'));el('span',label,a);a.href='/admin/'+slug;a.addEventListener('click',event=>{if(event.ctrlKey||event.metaKey||event.shiftKey||event.altKey||event.button!==0||a.getAttribute('aria-current')==='page')return;if(!document.startViewTransition||matchMedia('(prefers-reduced-motion: reduce)').matches)return;event.preventDefault();document.body.classList.add('workspace-leaving');document.querySelector('main').setAttribute('aria-busy','true');setTimeout(()=>location.assign(a.href),140);});if(location.pathname==='/admin/'+slug)a.setAttribute('aria-current','page');
  }
  for(const select of [$('#doctorFilter'),$('#analyticsDoctor')]){
