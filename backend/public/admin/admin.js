@@ -12,8 +12,8 @@ $('#dismissNotice').addEventListener('click',()=>tell(''));
 function iconNode(name){const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg'),use=document.createElementNS(ns,'use');svg.classList.add('ui-icon');svg.setAttribute('aria-hidden','true');use.setAttribute('href','/admin/icons.svg#'+name);svg.append(use);return svg;}
 async function api(action,body){let r;try{r=await fetch('/api/index.php?action='+action,{cache:'no-store',credentials:'same-origin',...(body!==undefined?{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},body:JSON.stringify(body)}:{})});}catch{throw Error('Connection failed. Please retry.');}let d;try{d=await r.json();}catch{throw Error('The server did not respond correctly. Please retry.');}if(!r.ok){if(r.status===401)show(false);throw Error(d.error||'Please retry.');}return d;}
 let pendingOperations=0;
-async function run(fn){pendingOperations++;document.body.classList.add('is-working');try{await fn();}catch(e){tell(e.message);}finally{pendingOperations--;if(!pendingOperations)document.body.classList.remove('is-working');}}
-function show(on){$('#desk').hidden=!on;$('#login').hidden=on;if(!on){currentRows=[];enquiries=[];for(const s of ['#appointments','#enquiries','#history','#summary','#analyticsStats','#dailyChart','#doctorAnalytics','#visitAnalytics','#statusAnalytics'])$(s).replaceChildren();document.querySelectorAll('dialog[open]').forEach(d=>d.close());}}
+async function run(fn){pendingOperations++;document.body.classList.add('is-working');try{await fn();}catch(e){if(!$('#sessionLoading').hidden)show(false);tell(e.message);}finally{pendingOperations--;if(!pendingOperations)document.body.classList.remove('is-working');}}
+function show(on){$('#sessionLoading').hidden=true;$('#desk').hidden=!on;$('#login').hidden=on;if(!on){currentRows=[];enquiries=[];for(const s of ['#appointments','#enquiries','#history','#summary','#analyticsStats','#dailyChart','#doctorAnalytics','#visitAnalytics','#statusAnalytics'])$(s).replaceChildren();document.querySelectorAll('dialog[open]').forEach(d=>d.close());}}
 function time(n){return new Date(2000,0,1,Math.floor(n/60),n%60).toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'});}
 function key(d){return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');}
 function selectView(next){
@@ -98,6 +98,7 @@ function applyAccount(){
 }
 async function signedIn(){
  if(!viewer)throw Error('Please sign in.');
+ if(routeDoctor&&(viewer.role!=='doctor'||viewer.doctor!==routeDoctor)){show(false);tell('This workspace requires '+(routeDoctor==='chetan'?'Dr. Chetan’s':'Dr. Mounika’s')+' own account. Reception can manage both doctors from the reception workspace.');return;}
  if(location.pathname==='/admin/'||location.pathname==='/admin/index.html'){
   location.replace('/admin/'+(viewer.role==='doctor'?'dr.'+viewer.doctor:'reception'));return;
  }
@@ -107,13 +108,29 @@ async function loadAnalytics(){
  const from=$('#analyticsFrom').value,to=$('#analyticsTo').value;if(!from||!to){tell('Choose a date range.');return;}
  const d=await api('admin-analytics',{from,to,doctor:$('#analyticsDoctor').value,shared:sharedView()});
  const counts=Object.fromEntries(d.status.map(s=>[s.status,Number(s.total)]));const total=Object.values(counts).reduce((a,b)=>a+b,0);
- const root=$('#analyticsStats');root.replaceChildren();for(const [label,value] of [['Saved bookings (incl. cancelled)',total],['Pending',counts.requested||0],['Completed',counts.completed||0],['Patients with non-cancelled bookings',d.patients]]){const c=el('div',undefined,root);c.className='stat';el('span',label,c);el('strong',String(value),c);}
- const daily=$('#dailyChart');daily.replaceChildren();if(!d.daily.length)el('p','No appointment activity in this date range.',daily);
- const peak=Math.max(1,...d.daily.map(x=>Number(x.total)));
- for(const day of d.daily){const row=el('div',undefined,daily);row.className='chart-row';el('span',day.visit_date,row);const meter=el('meter',undefined,row);meter.min=0;meter.max=peak;meter.value=Number(day.total);meter.setAttribute('aria-label',day.visit_date+' appointments: '+day.total);el('strong',String(day.total),row);}
- for(const [selector,rows,labelKey] of [['#doctorAnalytics',d.doctors,'name'],['#visitAnalytics',d.visit_types,'visit_type'],['#statusAnalytics',d.status,'status']]){const node=$(selector);node.replaceChildren();if(!rows.length)el('p','No appointments recorded.',node);for(const row of rows){const line=el('p',undefined,node);line.className='breakdown';el('span',labelKey==='status'?statusLabel[row.status]:row[labelKey],line);el('strong',String(row.total),line);}}
+ const root=$('#analyticsStats');root.replaceChildren();for(const [label,value] of [['Saved bookings (incl. cancelled)',total],['Pending requests',counts.requested||0],['Confirmed appointments',counts.confirmed||0],['Completed visits',counts.completed||0],['Cancelled bookings',counts.cancelled||0],['Patients with non-cancelled bookings',d.patients]]){const c=el('div',undefined,root);c.className='stat';el('span',label,c);el('strong',String(value),c);}
+ const daily=$('#dailyChart');daily.replaceChildren();
+ const days=[],byDate=new Map(d.daily.map(x=>[x.visit_date,Number(x.total)]));
+ const cursor=new Date(from+'T12:00:00'),end=new Date(to+'T12:00:00');
+ for(let i=0;cursor<=end&&i<367;i++,cursor.setDate(cursor.getDate()+1))days.push({date:key(cursor),count:byDate.get(key(cursor))||0});
+ if(!days.length||!total)el('p','No saved bookings for this date range.',daily);
+ else renderActivityGraph(daily,days);
+ $('#doctorAnalytics').parentElement.hidden=!!routeDoctor;
+ for(const [selector,rows,labelKey] of [['#doctorAnalytics',d.doctors,'name'],['#visitAnalytics',d.visit_types,'visit_type'],['#statusAnalytics',d.status,'status']]){const node=$(selector);node.replaceChildren();if(!rows.length)el('p','No appointments recorded.',node);for(const row of rows){const line=el('p',undefined,node);line.className='breakdown';el('span',labelKey==='status'?statusLabel[row.status]:row[labelKey],line);el('strong',String(row.total)+' booking'+(Number(row.total)===1?'':'s'),line);const meter=el('meter',undefined,node);meter.className='breakdown-meter';meter.min=0;meter.max=Math.max(1,total);meter.value=Number(row.total);meter.setAttribute('aria-label',(labelKey==='status'?statusLabel[row.status]:row[labelKey])+': '+row.total+' of '+total+' bookings');}}
  if(view==='analytics')$('#updated').textContent='Analytics: '+from+' to '+to+' · '+$('#analyticsDoctor').selectedOptions[0].textContent+' · India time';
 }
+function renderActivityGraph(root,days){
+ const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');svg.setAttribute('viewBox','0 0 900 260');svg.setAttribute('role','img');svg.setAttribute('aria-label','Daily saved appointments, '+days[0].date+' to '+days[days.length-1].date);svg.classList.add('activity-graph');
+ function node(tag,attrs,text){const n=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,String(v));if(text!==undefined)n.textContent=text;svg.append(n);return n;}
+ const peak=Math.max(1,...days.map(x=>x.count)),max=Math.max(4,Math.ceil(peak/4)*4),x=i=>55+(days.length===1?400:i*800/(days.length-1)),y=v=>210-v*170/max;
+ for(let i=0;i<=4;i++){const value=max*i/4;node('line',{x1:55,x2:855,y1:y(value),y2:y(value),stroke:'#e7e0d6'});node('text',{x:42,y:y(value)+4,'text-anchor':'end',fill:'#80776d','font-size':12},String(value));}
+ const points=days.map((d,i)=>x(i)+','+y(d.count)).join(' ');node('polyline',{points,fill:'none',stroke:'#855d3c','stroke-width':3,'stroke-linejoin':'round'});
+ const step=Math.max(1,Math.ceil(days.length/7));days.forEach((d,i)=>{const dot=node('circle',{cx:x(i),cy:y(d.count),r:days.length<40?4:2,fill:'#855d3c'});const title=document.createElementNS(ns,'title');title.textContent=d.date+': '+d.count+' bookings';dot.append(title);if(i%step===0||i===days.length-1)node('text',{x:x(i),y:238,'text-anchor':'middle',fill:'#80776d','font-size':11},d.date.slice(5));});
+ root.append(svg);const list=el('details',undefined,root);el('summary','View daily numbers',list);for(const day of days){const row=el('p',day.date+' — '+day.count+' bookings',list);row.className='daily-number';}
+}
+$('#analyticsToday').addEventListener('click',()=>{ $('#from').value=today;$('#to').value=today;$('#statusFilter').value='';page=1;selectView('appointments');run(loadList);});
+$('#analyticsPending').addEventListener('click',()=>{ $('#from').value=today;$('#to').value=maxDate;$('#statusFilter').value='requested';page=1;selectView('appointments');run(loadList);});
+$('#analyticsSchedule').addEventListener('click',()=>{selectView('availability');run(loadOffice);});
 function syncDoctorChips(){
  const root=$('#doctorChips');root.replaceChildren();
  for(const option of [...$('#doctorFilter').options]){
@@ -130,7 +147,7 @@ document.querySelectorAll('[data-days]').forEach(b=>b.addEventListener('click',(
 $('#loadAnalytics').addEventListener('click',()=>run(loadAnalytics));
 $('#passwordButton').addEventListener('click',()=>{if(viewer?.role!=='doctor')return;$('#passwordForm').reset();$('#passwordDialog').showModal();});
 $('#passwordForm').addEventListener('submit',e=>{e.preventDefault();const f=new FormData(e.target);if(f.get('new_password')!==f.get('confirm_password')){tell('New passwords do not match.');return;}run(async()=>{const r=await api('admin-password',{current_password:f.get('current_password'),new_password:f.get('new_password')});csrf=r.csrf;e.target.reset();$('#passwordDialog').close();tell('Password changed. Other sessions have been signed out.');});});
-$('#loginForm').addEventListener('submit',e=>{e.preventDefault();run(async()=>{const b=e.target.querySelector('button');b.disabled=true;try{const r=await api('login',Object.fromEntries(new FormData(e.target)));csrf=r.csrf;viewer=r.user;e.target.reset();await signedIn();}finally{b.disabled=false;}});});$('#logout').addEventListener('click',()=>run(async()=>{await api('admin-logout',{});show(false);const b=await api('bootstrap');csrf=b.csrf;tell('Signed out.');}));
+$('#loginForm').addEventListener('submit',e=>{e.preventDefault();run(async()=>{const b=e.target.querySelector('button');b.disabled=true;try{const r=await api('login',{...Object.fromEntries(new FormData(e.target)),workspace:routeDoctor||''});csrf=r.csrf;viewer=r.user;e.target.reset();await signedIn();}finally{b.disabled=false;}});});$('#logout').addEventListener('click',()=>run(async()=>{await api('admin-logout',{});show(false);const b=await api('bootstrap');csrf=b.csrf;tell('Signed out.');}));
 setInterval(()=>{if(!$('#desk').hidden&&view==='appointments'&&!document.querySelector('dialog[open]')&&!$('#filters').contains(document.activeElement))run(loadList);},60000);
 if(routeDoctor){$('#login h1').textContent=routeDoctor==='chetan'?'Dr. Chetan · Sign in':'Dr. Mounika · Sign in';}
 run(async()=>{const b=await api('bootstrap');csrf=b.csrf;doctors=b.doctors;viewer=b.user;today=b.today;maxDate=b.max_date;$('#from').value=today;$('#to').value=today;$('#closure [name=date]').min=today;for(const d of doctors){$('#doctorFilter').append(new Option(d.name,d.slug));booking.elements.doctor.append(new Option(d.name,d.slug));$('#closure select').append(new Option(d.name,d.slug));}try{await signedIn();}catch(e){show(false);if(e.message!=='Please sign in.')throw e;tell('Sign in to manage the clinic.');}});

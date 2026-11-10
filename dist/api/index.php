@@ -290,6 +290,9 @@ try {
         $dummy = '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.';
         $valid = password_verify($password,$staff['password_hash'] ?? $dummy);
         if (!$staff || !$valid) fail(401,'Incorrect username or password.');
+        $workspace=textValue($data,'workspace',30,false);
+        if ($workspace!=='' && !in_array($workspace,['chetan','mounika'],true)) fail(422,'Choose a valid doctor workspace.');
+        if ($workspace!=='' && ($staff['role']!=='doctor' || $staff['doctor_slug']!==$workspace)) fail(403,'Sign in with the account belonging to this doctor.');
         session_regenerate_id(true);
         $_SESSION['staff_id']=(int)$staff['id'];
         $_SESSION['session_version']=(int)$staff['session_version'];

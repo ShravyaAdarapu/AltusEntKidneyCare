@@ -59,3 +59,7 @@ Only doctor accounts can change their own passwords in the dashboard. Reception 
 Appointment creation, status changes, rescheduling, schedule changes, enquiry updates and password changes are recorded in `audit_log` using staff/record IDs rather than copying patient concerns. Analytics are computed from saved bookings; they are not clinical outcomes or revenue reports. Public booking still creates pending requests and has no online payment or automatic messaging integration.
 
 Run `backend/bin/test-permissions.py` only with the isolated test PHP server on port 8094 and the disposable accounts from `setup-test.php`. The suite verifies doctor isolation and shared read-only behaviour, authorisation, input/CSRF checks, analytics scoping and session revocation.
+
+
+### Doctor workspace sign-in
+Doctor pages require the matching doctor account. Reception credentials cannot sign in on a doctor page; reception continues to manage both doctors through `/admin/reception`. Doctors may open the shared reception workspace to view both doctors, while editing only their own bookings and schedules. Session checks finish before the login form is shown to prevent a login-screen flash. No database migration is required for this change.

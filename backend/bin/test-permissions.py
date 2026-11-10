@@ -10,6 +10,14 @@ def login(user,password):
  op=client();code,b=call(op,'bootstrap');assert code==200,(code,b)
  code,a=call(op,'login',{'username':user,'password':password},b['csrf']);assert code==200,(code,a)
  return op,a['csrf'],b
+# Doctor-route sign-in must match that doctor's account, even with valid credentials.
+for user,workspace,expected in [('testchetan','mounika',403),('testmounika','chetan',403),('testdesk','chetan',403),('testchetan','chetan',200),('testmounika','mounika',200)]:
+ op=client();code,b=call(op,'bootstrap');assert code==200
+ password='Altus-local-test-only!' if user=='testdesk' else 'Altus-doctor-test-only!'
+ code,result=call(op,'login',dict(username=user,password=password,workspace=workspace),b['csrf'])
+ assert code==expected,(user,workspace,code)
+ if code==200:call(op,'admin-logout',{},result['csrf'])
+
 rec,token,boot=login('testdesk','Altus-local-test-only!')
 assert call(rec,'admin-password',dict(current_password='Altus-local-test-only!',new_password='Reception-must-not-change!'),token)[0]==403
 chetan,ct,_=login('testchetan','Altus-doctor-test-only!');mounika,mt,_=login('testmounika','Altus-doctor-test-only!')

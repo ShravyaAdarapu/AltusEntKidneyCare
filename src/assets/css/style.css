@@ -1802,3 +1802,6 @@ main:has(> .page-hero) > .doctor-profile-details { padding-top: 8px; }
 .about-three-call svg{transition:transform .2s ease}.about-three-call:hover svg{transform:rotate(-8deg)}
 .about-three-book .btn-row a:focus-visible{outline:2px solid #9c6644;outline-offset:4px}
 @media(prefers-reduced-motion:reduce){.about-three-book .btn-primary,.about-three-call,.about-three-call svg{transition:none}.about-three-book .btn-primary:is(:hover,:focus-visible),.about-three-call:is(:hover,:focus-visible),.about-three-call:hover svg{transform:none}}
+
+/* Increase the gallery as one balanced unit, including the featured photograph. */
+@media(min-width:721px){.gallery-category-grid:has(.gallery-shot[aria-pressed="true"]){--gallery-thumb-height:clamp(100px,16vh,155px)}}
