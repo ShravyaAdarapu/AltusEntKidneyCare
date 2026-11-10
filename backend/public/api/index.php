@@ -313,6 +313,7 @@ try {
 
         $data = input();
         if ($action === 'admin-password') {
+            if ($viewer['role'] !== 'doctor') fail(403,'Only doctors can change their password from this dashboard.');
             $old=textValue($data,'current_password',128);$new=textValue($data,'new_password',128);
             if (strlen($new)<14 || $old===$new) fail(422,'Use a different password of at least 14 characters.');
             $hash=query('SELECT password_hash FROM staff_accounts WHERE id=?',[$viewer['id']])->fetchColumn();

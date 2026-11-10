@@ -7,9 +7,12 @@ const sharedView=()=>!routeDoctor||viewer?.role==='doctor'&&routeDoctor!==viewer
 const canManage=slug=>viewer?.role==='reception'||viewer?.doctor===slug;
 let csrf='',doctors=[],today='',maxDate='',page=1,total=0,listSequence=0,currentRows=[],enquiries=[],view='appointments',saving=false,rescheduling=null,selectedMinute=null,slotSequence=0;
 function el(tag,text,parent){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(parent)parent.append(e);return e;}
-function tell(text){notice.textContent=text;}
+function tell(text){$('#noticeText').textContent=text;notice.hidden=!text;}
+$('#dismissNotice').addEventListener('click',()=>tell(''));
+function iconNode(name){const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg'),use=document.createElementNS(ns,'use');svg.classList.add('ui-icon');svg.setAttribute('aria-hidden','true');use.setAttribute('href','/admin/icons.svg#'+name);svg.append(use);return svg;}
 async function api(action,body){let r;try{r=await fetch('/api/index.php?action='+action,{cache:'no-store',credentials:'same-origin',...(body!==undefined?{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},body:JSON.stringify(body)}:{})});}catch{throw Error('Connection failed. Please retry.');}let d;try{d=await r.json();}catch{throw Error('The server did not respond correctly. Please retry.');}if(!r.ok){if(r.status===401)show(false);throw Error(d.error||'Please retry.');}return d;}
-async function run(fn){try{await fn();}catch(e){tell(e.message);}}
+let pendingOperations=0;
+async function run(fn){pendingOperations++;document.body.classList.add('is-working');try{await fn();}catch(e){tell(e.message);}finally{pendingOperations--;if(!pendingOperations)document.body.classList.remove('is-working');}}
 function show(on){$('#desk').hidden=!on;$('#login').hidden=on;if(!on){currentRows=[];enquiries=[];for(const s of ['#appointments','#enquiries','#history','#summary','#analyticsStats','#dailyChart','#doctorAnalytics','#visitAnalytics','#statusAnalytics'])$(s).replaceChildren();document.querySelectorAll('dialog[open]').forEach(d=>d.close());}}
 function time(n){return new Date(2000,0,1,Math.floor(n/60),n%60).toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'});}
 function key(d){return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');}
@@ -18,14 +21,14 @@ function selectView(next){
  for(const v of ['appointments','availability','enquiries','analytics'])$('#'+v+'View').hidden=v!==next;
  $('#summary').hidden=next!=='appointments';
  $('#pageTitle').textContent={appointments:'Appointments',availability:'Doctors & availability',enquiries:'Patient enquiries',analytics:'Analytics'}[next];
- document.querySelectorAll('nav button').forEach(b=>{const active=b.dataset.view===next||next==='appointments'&&b.dataset.status===$('#statusFilter').value;b.setAttribute('aria-current',active?'page':'false');});
+ document.querySelectorAll('nav button').forEach(b=>{const status=$('#statusFilter').value;const active=next==='appointments'?(status?b.dataset.status===status:b.dataset.view==='appointments'):b.dataset.view===next;b.setAttribute('aria-current',active?'page':'false');});
 }
-function action(parent,label,fn){const b=el('button',label,parent);b.type='button';b.addEventListener('click',()=>run(async()=>{b.disabled=true;try{await fn();}finally{b.disabled=false;}}));return b;}
+function action(parent,label,fn){const b=el('button',label,parent);b.type='button';const icons={'Visit history':'history','Confirm':'check','Complete':'check','Reschedule':'calendar','Cancel':'close','Mark resolved':'check','Reopen':'refresh'};if(icons[label])b.prepend(iconNode(icons[label]));b.addEventListener('click',()=>run(async()=>{b.disabled=true;try{await fn();}finally{b.disabled=false;}}));return b;}
 function phone(parent,value){const a=el('a',value,parent);a.href='tel:'+value.replace(/[^+0-9]/g,'');}
 const statusLabel={requested:'Pending',confirmed:'Confirmed',completed:'Completed',cancelled:'Cancelled'};
 function filters(){return {from:$('#from').value,to:$('#to').value,doctor:$('#doctorFilter').value,status:$('#statusFilter').value,search:$('#search').value.trim(),page,shared:sharedView()};}
-async function loadList(){if(!$('#filters').reportValidity())return;const seq=++listSequence;const d=await api('admin-list',filters());if(seq!==listSequence)return;currentRows=d.appointments;total=d.total;const body=$('#appointments');body.replaceChildren();$('#empty').hidden=!!currentRows.length;
-for(const a of currentRows){const tr=el('tr',undefined,body);const date=el('td',a.visit_date,tr);el('strong',time(Number(a.start_minute)),date);const patient=el('td',undefined,tr);el('strong',a.patient_name,patient);el('br',undefined,patient);phone(patient,a.phone);el('small',a.reference+(a.age!==null?' · Age '+a.age:''),patient);el('td',a.doctor,tr);const concern=el('td',a.visit_type,tr);el('p',a.concern||'—',concern);const state=el('td',undefined,tr);el('span',statusLabel[a.status],state).className='status '+a.status;const controls=el('td',undefined,tr);
+async function loadList(){if(!$('#filters').reportValidity())return;syncDoctorChips();const seq=++listSequence;const d=await api('admin-list',filters());if(seq!==listSequence)return;currentRows=d.appointments;total=d.total;const body=$('#appointments');body.replaceChildren();$('#empty').hidden=!!currentRows.length;
+for(const a of currentRows){const tr=el('tr',undefined,body);const date=el('td',undefined,tr);el('strong',time(Number(a.start_minute)),date);el('small',a.visit_date,date);const patient=el('td',undefined,tr);patient.className='patient-cell';el('strong',a.patient_name,patient);el('br',undefined,patient);phone(patient,a.phone);el('small',a.reference+(a.age!==null?' · Age '+a.age:''),patient);el('td',a.doctor,tr);const concern=el('td',a.visit_type,tr);concern.className='concern-cell';el('p',a.concern||'—',concern);const state=el('td',undefined,tr);el('span',statusLabel[a.status],state).className='status '+a.status;const controls=el('td',undefined,tr);controls.className='row-actions';
  action(controls,'Visit history',()=>history(a));if(canManage(a.doctor_slug)&&a.status==='requested')action(controls,'Confirm',()=>change(a,'confirmed'));if(canManage(a.doctor_slug)&&a.status==='confirmed')action(controls,'Complete',()=>change(a,'completed'));if(canManage(a.doctor_slug)&&['requested','confirmed'].includes(a.status)){action(controls,'Reschedule',()=>openBooking(a));action(controls,'Cancel',()=>{$('#cancelText').textContent=a.patient_name+' · '+a.doctor+' · '+a.visit_date+' '+time(Number(a.start_minute));$('#cancelDialog').dataset.id=a.id;$('#cancelDialog').showModal();});}}
 const counts=Object.fromEntries(d.summary.map(x=>[x.status,Number(x.total)]));const summary=$('#summary');summary.replaceChildren();for(const [status,label] of Object.entries(statusLabel)){const card=el('div',undefined,summary);card.className='stat';el('span',label,card);el('strong',String(counts[status]||0),card);}$('#pendingBadge').textContent=counts.requested?'('+counts.requested+')':'';$('#listCaption').textContent=`${$('#from').value} to ${$('#to').value} · ${$('#doctorFilter').selectedOptions[0].textContent}`;$('#pageInfo').textContent=`${total?((page-1)*25+1):0}–${Math.min(page*25,total)} of ${total}`;$('#prev').disabled=page<=1;$('#next').disabled=page*25>=total;$('#updated').textContent='Updated '+new Date().toLocaleTimeString('en-IN',{timeZone:'Asia/Kolkata',hour:'numeric',minute:'2-digit'})+' IST · Totals cover the selected date range.';}
 async function change(a,status){await api('admin-status',{id:Number(a.id),status});await loadList();tell('Appointment '+status+'.');}
@@ -47,12 +50,17 @@ booking.addEventListener('submit',e=>{e.preventDefault();if(saving||selectedMinu
 $('#cancelForm').addEventListener('submit',e=>{e.preventDefault();run(async()=>{const b=$('#confirmCancel');b.disabled=true;try{await api('admin-status',{id:Number($('#cancelDialog').dataset.id),status:'cancelled'});$('#cancelDialog').close();await loadList();tell('Appointment cancelled; slot released.');}finally{b.disabled=false;}});});
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>$('#'+b.dataset.close).close()));
 document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>run(async()=>{if(b.dataset.status!==undefined){$('#statusFilter').value=b.dataset.status;page=1;selectView('appointments');await loadList();}else{if(b.dataset.view==='appointments'){$('#statusFilter').value='';page=1;}selectView(b.dataset.view);await refresh();}})));
-$('#filters').addEventListener('submit',e=>{e.preventDefault();page=1;run(loadList);});$('#doctorFilter').addEventListener('change',()=>{page=1;run(loadList);});$('#statusFilter').addEventListener('change',()=>{page=1;run(loadList);});$('#prev').addEventListener('click',()=>{page--;run(loadList);});$('#next').addEventListener('click',()=>{page++;run(loadList);});
+$('#filters').addEventListener('submit',e=>{e.preventDefault();page=1;run(loadList);});$('#doctorFilter').addEventListener('change',()=>{page=1;run(loadList);});$('#statusFilter').addEventListener('change',()=>{page=1;selectView('appointments');run(loadList);});$('#prev').addEventListener('click',()=>{page--;run(loadList);});$('#next').addEventListener('click',()=>{page++;run(loadList);});
 $('#today').addEventListener('click',()=>{$('#from').value=today;$('#to').value=today;page=1;run(loadList);});$('#week').addEventListener('click',()=>{const d=new Date(today+'T12:00:00');d.setDate(d.getDate()+6);$('#from').value=today;$('#to').value=key(d);page=1;run(loadList);});$('#refresh').addEventListener('click',()=>run(refresh));$('#newBooking').addEventListener('click',()=>run(()=>openBooking()));$('#print').addEventListener('click',()=>window.print());$('#unresolved').addEventListener('change',renderEnquiries);
 $('#closure').addEventListener('submit',e=>{e.preventDefault();run(async()=>{const d=Object.fromEntries(new FormData(e.target));d.closed=d.closed==='true';await api('admin-closure',d);await loadOffice();tell('Date availability updated. Existing appointments unchanged.');});});
 function applyAccount(){
  const personal=routeDoctor;
- $('#workspaceLabel').textContent=personal?(personal==='chetan'?'DR. CHETAN':'DR. MOUNIKA'):'RECEPTION DESK';
+ $('#passwordButton').hidden=viewer.role!=='doctor';
+ $('#signedInName').textContent=viewer.name;
+ $('#accountRole').textContent=viewer.role==='doctor'?'Doctor account':'Reception account';
+ const note=$('#accessNote');note.hidden=viewer.role!=='doctor'||!sharedView();note.textContent='Shared reception view: you can view both doctors, but manage only your own appointments and schedule.';
+ document.title=(personal?(personal==='chetan'?'Dr. Chetan':'Dr. Mounika'):'Reception')+' | Altus Clinic Desk';
+ $('#workspaceLabel').textContent=personal?(personal==='chetan'?'Dr. Chetan':'Dr. Mounika'):'Reception desk';
  const links=$('#workspaceLinks');links.replaceChildren();
  for(const [slug,label] of [['reception','Reception'],['dr.chetan','Dr. Chetan'],['dr.mounika','Dr. Mounika']]){
   if(viewer.role==='doctor'&&slug!=='reception'&&slug!=='dr.'+viewer.doctor)continue;
@@ -65,14 +73,14 @@ function applyAccount(){
  booking.elements.doctor.replaceChildren();$('#closure select').replaceChildren();
  for(const d of doctors.filter(d=>canManage(d.slug))){booking.elements.doctor.append(new Option(d.name,d.slug));$('#closure select').append(new Option(d.name,d.slug));}
  document.querySelector('nav [data-view=enquiries]').hidden=viewer.role!=='reception';
- $('#analyticsFrom').value=$('#from').value;$('#analyticsTo').value=$('#to').value;
+ const initialFrom=new Date(today+'T12:00:00');initialFrom.setDate(initialFrom.getDate()-6);$('#analyticsFrom').value=key(initialFrom);$('#analyticsTo').value=today;syncDoctorChips();
 }
 async function signedIn(){
  if(!viewer)throw Error('Please sign in.');
  if(location.pathname==='/admin/'||location.pathname==='/admin/index.html'){
   location.replace('/admin/'+(viewer.role==='doctor'?'dr.'+viewer.doctor:'reception'));return;
  }
- applyAccount();show(true);await loadList();await loadOffice();selectView('analytics');await loadAnalytics();tell('');
+ applyAccount();show(true);selectView(routeDoctor?'analytics':'appointments');await loadList();await loadOffice();if(view==='analytics')await loadAnalytics();tell('');
 }
 async function loadAnalytics(){
  const from=$('#analyticsFrom').value,to=$('#analyticsTo').value;if(!from||!to){tell('Choose a date range.');return;}
@@ -85,8 +93,21 @@ async function loadAnalytics(){
  for(const [selector,rows,labelKey] of [['#doctorAnalytics',d.doctors,'name'],['#visitAnalytics',d.visit_types,'visit_type'],['#statusAnalytics',d.status,'status']]){const node=$(selector);node.replaceChildren();if(!rows.length)el('p','No appointments recorded.',node);for(const row of rows){const line=el('p',undefined,node);line.className='breakdown';el('span',labelKey==='status'?statusLabel[row.status]:row[labelKey],line);el('strong',String(row.total),line);}}
  $('#updated').textContent='Analytics: '+from+' to '+to+' · '+$('#analyticsDoctor').selectedOptions[0].textContent+' · India time';
 }
+function syncDoctorChips(){
+ const root=$('#doctorChips');root.replaceChildren();
+ for(const option of [...$('#doctorFilter').options]){
+  if(routeDoctor&&option.value!==routeDoctor)continue;
+  const b=el('button',option.textContent,root);b.type='button';b.setAttribute('aria-pressed',String(option.value===$('#doctorFilter').value));
+  b.addEventListener('click',()=>{if($('#doctorFilter').disabled)return;$('#doctorFilter').value=option.value;page=1;run(loadList);});
+ }
+}
+let searchTimer;
+$('#search').addEventListener('input',()=>{clearTimeout(searchTimer);searchTimer=setTimeout(()=>{page=1;run(loadList);},350);});
+$('#resetFilters').addEventListener('click',()=>{clearTimeout(searchTimer);$('#from').value=today;$('#to').value=today;$('#search').value='';$('#statusFilter').value='';$('#doctorFilter').value=routeDoctor||'';page=1;selectView('appointments');run(loadList);});
+for(const [id,delta] of [['previousDay',-1],['nextDay',1]])$('#'+id).addEventListener('click',()=>{const d=new Date($('#from').value+'T12:00:00');if(Number.isNaN(+d))return;d.setDate(d.getDate()+delta);$('#from').value=key(d);$('#to').value=key(d);page=1;run(loadList);});
+document.querySelectorAll('[data-days]').forEach(b=>b.addEventListener('click',()=>{const from=new Date(today+'T12:00:00');from.setDate(from.getDate()-Number(b.dataset.days)+1);$('#analyticsFrom').value=key(from);$('#analyticsTo').value=today;run(loadAnalytics);}));
 $('#loadAnalytics').addEventListener('click',()=>run(loadAnalytics));
-$('#passwordButton').addEventListener('click',()=>{$('#passwordForm').reset();$('#passwordDialog').showModal();});
+$('#passwordButton').addEventListener('click',()=>{if(viewer?.role!=='doctor')return;$('#passwordForm').reset();$('#passwordDialog').showModal();});
 $('#passwordForm').addEventListener('submit',e=>{e.preventDefault();const f=new FormData(e.target);if(f.get('new_password')!==f.get('confirm_password')){tell('New passwords do not match.');return;}run(async()=>{const r=await api('admin-password',{current_password:f.get('current_password'),new_password:f.get('new_password')});csrf=r.csrf;e.target.reset();$('#passwordDialog').close();tell('Password changed. Other sessions have been signed out.');});});
 $('#loginForm').addEventListener('submit',e=>{e.preventDefault();run(async()=>{const b=e.target.querySelector('button');b.disabled=true;try{const r=await api('login',Object.fromEntries(new FormData(e.target)));csrf=r.csrf;viewer=r.user;e.target.reset();await signedIn();}finally{b.disabled=false;}});});$('#logout').addEventListener('click',()=>run(async()=>{await api('admin-logout',{});show(false);const b=await api('bootstrap');csrf=b.csrf;tell('Signed out.');}));
 setInterval(()=>{if(!$('#desk').hidden&&view==='appointments'&&!document.querySelector('dialog[open]')&&!$('#filters').contains(document.activeElement))run(loadList);},60000);

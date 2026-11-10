@@ -1,6 +1,7 @@
 <?php
 // Development routing mirrors Hostinger's public .htaccess rules.
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+if (in_array($path,['/health-library','/health-library.html','/blogs','/blogs.html'],true)) {header('Location: /gallery#gallery-learning-title',true,301);return true;}
 if (preg_match('~^/admin/(reception|dr\.chetan|dr\.mounika)/?$~D',$path)) {
  header('Content-Type: text/html; charset=utf-8');readfile(dirname(__DIR__).'/dist/admin/index.html');return true;
 }

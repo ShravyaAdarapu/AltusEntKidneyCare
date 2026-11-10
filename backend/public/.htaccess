@@ -3,6 +3,9 @@ DirectoryIndex index.html
 
 RewriteEngine On
 
+# The reading material now lives in the gallery.
+RewriteRule ^(?:health-library|blogs)(?:\.html)?/?$ /gallery#gallery-learning-title [R=301,L,NE]
+
 # Redirect old public page URLs to the clean URL. THE_REQUEST avoids loops
 # when the clean URL is internally served by its .html file.
 RewriteCond %{THE_REQUEST} \s/+index\.html(?:[?\s]) [NC]

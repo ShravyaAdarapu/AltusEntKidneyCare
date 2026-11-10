@@ -132,7 +132,6 @@ NAV = [
     ]),
     ("patients", "patient-info.html", "Patient Info"),
     ("gallery", "gallery.html", "Gallery"),
-    ("blog", "health-library.html", "Blogs"),
     ("contact", "contact.html", "Contact Us"),
 ]
 
@@ -195,12 +194,11 @@ LAYOUT = """<!doctype html>
 <li><a href="kidney-care.html">Kidney Care</a></li>
 <li><a href="ent-care.html">ENT Care</a></li>
 <li><a href="gallery.html">Gallery</a></li>
-<li><a href="health-library.html">Blogs</a></li>
 </ul></div>
 <div><h4>Patients</h4><ul>
 <li><a href="book-appointment.html">Book Appointment</a></li>
 <li><a href="patient-info.html">Your First Visit</a></li>
-<li><a href="patient-info.html#insurance">Insurance &amp; Payments</a></li>
+<li><a href="patient-info.html#fees">Consultation fees</a></li>
 <li><a href="patient-info.html#faq">FAQs</a></li>
 <li><a href="privacy-policy.html">Privacy Policy</a></li>
 </ul></div>

@@ -11,6 +11,7 @@ def login(user,password):
  code,a=call(op,'login',{'username':user,'password':password},b['csrf']);assert code==200,(code,a)
  return op,a['csrf'],b
 rec,token,boot=login('testdesk','Altus-local-test-only!')
+assert call(rec,'admin-password',dict(current_password='Altus-local-test-only!',new_password='Reception-must-not-change!'),token)[0]==403
 chetan,ct,_=login('testchetan','Altus-doctor-test-only!');mounika,mt,_=login('testmounika','Altus-doctor-test-only!')
 start=datetime.date.fromisoformat(boot['today'])+datetime.timedelta(days=30)
 while start.weekday()==6:start+=datetime.timedelta(days=1)

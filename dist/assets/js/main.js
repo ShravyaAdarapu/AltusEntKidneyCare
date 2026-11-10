@@ -133,3 +133,8 @@
     sections.forEach(section => focusObserver.observe(section));
   }
 }
+
+{
+ const dialog=document.getElementById('clinicPhotoDialog');
+ if(dialog){const image=dialog.querySelector('img');document.querySelectorAll('[data-photo]').forEach(button=>button.addEventListener('click',()=>{image.src=button.dataset.photo;image.alt=button.querySelector('img').alt;dialog.showModal();}));dialog.querySelector('button').addEventListener('click',()=>dialog.close());dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});dialog.addEventListener('close',()=>{image.removeAttribute('src');});}
+}
